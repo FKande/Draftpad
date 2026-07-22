@@ -1,0 +1,26 @@
+{
+  "name": "draftpad",
+  "version": "1.0.0",
+  "description": "A multi-user note-taking app with block-based editing and cross-device sync.",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "npm run lint --prefix client && npm run lint --prefix server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FKande/Draftpad.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/FKande/Draftpad/issues"
+  },
+  "homepage": "https://github.com/FKande/Draftpad#readme",
+  "devDependencies": {
+    "prettier": "^3.9.6"
+  }
+}
