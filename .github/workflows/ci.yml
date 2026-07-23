@@ -30,6 +30,9 @@ jobs:
       - name: Test server
         run: npm test
         working-directory: server
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
       - name: Install client dependencies
         run: npm install
