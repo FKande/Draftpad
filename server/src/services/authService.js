@@ -50,3 +50,7 @@ export async function login(email, password) {
 
   return generatedToken
 }
+
+export async function logout(token) {
+  await db.delete(sessions).where(eq(sessions.id, token))
+}
