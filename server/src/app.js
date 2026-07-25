@@ -1,6 +1,7 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import authRouter from './routes/auth.js'
+import { errorHandler } from './middleware/errorHandler.js'
 
 const app = express()
 
@@ -12,5 +13,7 @@ app.use('/auth', authRouter)
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' })
 })
+
+app.use(errorHandler)
 
 export default app
