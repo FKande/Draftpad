@@ -30,3 +30,29 @@ describe('GET /auth/me', () => {
     expect(meRes.body.email).toBe('me@example.com')
   })
 })
+
+describe('POST /auth/logout', () => {
+  beforeEach(async () => {
+    await db.delete(users)
+  })
+
+  it('invalidates the session so the cookie stops working', async () => {
+    await signup('me@example.com', 'password123')
+
+    const loginResponse = await request(app)
+      .post('/auth/login')
+      .send({ email: 'me@example.com', password: 'password123' })
+
+    const cookie = loginResponse.headers['set-cookie']
+
+    const logoutResponse = await request(app)
+      .post('/auth/logout')
+      .set('Cookie', cookie)
+
+    expect(logoutResponse.status).toBe(200)
+
+    const meRes = await request(app).get('/auth/me').set('Cookie', cookie)
+
+    expect(meRes.status).toBe(401)
+  })
+})

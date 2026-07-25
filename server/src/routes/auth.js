@@ -1,6 +1,6 @@
 import express from 'express'
 import { z } from 'zod'
-import { signup, login } from '../services/authService.js'
+import { signup, login, logout } from '../services/authService.js'
 import { requireAuth } from '../middleware/requireAuth.js'
 
 const router = express.Router()
@@ -55,6 +55,15 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     return res.status(401).json({ error: err.message })
   }
+})
+
+router.post('/logout', async (req, res) => {
+  const token = req.cookies.session
+  if (token) {
+    await logout(token)
+  }
+  res.clearCookie('session')
+  return res.status(200).json({ success: true })
 })
 
 router.get('/me', requireAuth, (req, res) => {
