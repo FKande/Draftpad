@@ -1,6 +1,7 @@
 import express from 'express'
 import { z } from 'zod'
 import { signup, login } from '../services/authService.js'
+import { requireAuth } from '../middleware/requireAuth.js'
 
 const router = express.Router()
 
@@ -54,6 +55,10 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     return res.status(401).json({ error: err.message })
   }
+})
+
+router.get('/me', requireAuth, (req, res) => {
+  return res.status(200).json(req.user)
 })
 
 export default router
