@@ -48,7 +48,9 @@ export async function login(email, password) {
     .insert(sessions)
     .values({ id: generatedToken, userId: dbUser.id, expiresAt: tokenExpiry })
 
-  return generatedToken
+  const user = { id: dbUser.id, email: dbUser.email, createdAt: dbUser.createdAt }
+
+  return { token: generatedToken, user: user }
 }
 
 export async function logout(token) {

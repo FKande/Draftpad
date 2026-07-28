@@ -3,8 +3,14 @@ import cookieParser from 'cookie-parser'
 import authRouter from './routes/auth.js'
 import notesRouter from './routes/notes.js'
 import { errorHandler } from './middleware/errorHandler.js'
+import cors from 'cors'
 
 const app = express()
+
+app.use(cors({
+  origin: process.env.CLIENT_ORIGIN,
+  credentials: true,
+}))
 
 app.use(express.json())
 app.use(cookieParser())
