@@ -44,14 +44,14 @@ router.post('/login', async (req, res) => {
   const password = result.data.password
 
   try {
-    const token = await login(email, password)
+    const { token, user } = await login(email, password)
     res.cookie('session', token, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     })
-    return res.status(200).json({ success: true })
+    return res.status(200).json(user)
   } catch (err) {
     return res.status(401).json({ error: err.message })
   }

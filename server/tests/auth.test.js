@@ -44,13 +44,13 @@ describe('login service', () => {
   })
 
   it('returns a session token for valid credentials', async () => {
-    const token = await login(exampleEmail, examplePassword)
+    const {token} = await login(exampleEmail, examplePassword)
     expect(token).toBeDefined()
     expect(token).toHaveLength(64)
   })
 
   it('creates session row', async () => {
-    const token = await login(exampleEmail, examplePassword)
+    const {token} = await login(exampleEmail, examplePassword)
     const existing = await db
       .select()
       .from(sessions)
