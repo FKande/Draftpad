@@ -46,6 +46,10 @@ h6 {
 
 /* custom styling */
 
+button {
+  width: fit-content;
+}
+
 .vertical-section {
   display: flex;
   flex-direction: column;

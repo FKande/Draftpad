@@ -28,6 +28,10 @@ export async function login(email, password) {
   return request('/auth/login', { method: 'POST', body: { email, password } })
 }
 
+export async function signup(email, password) {
+  return request('/auth/signup', { method: 'POST', body: {email, password} })
+}
+
 export async function logout() {
   return request('/auth/logout', { method: 'POST' })
 }

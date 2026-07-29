@@ -26,8 +26,14 @@ router.post('/signup', async (req, res) => {
   const password = result.data.password
 
   try {
-    const newUser = await signup(email, password)
-    return res.status(201).json(newUser)
+    const { token, user } = await signup(email, password)
+    res.cookie('session', token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    })
+    return res.status(201).json(user)
   } catch (err) {
     return res.status(409).json({ error: err.message })
   }

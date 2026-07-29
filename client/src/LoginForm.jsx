@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { login } from './api'
 
-const LoginForm = ({ onLogin }) => {
+const LoginForm = ({ onLogin, onSwitchToSignup }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
@@ -44,6 +44,10 @@ const LoginForm = ({ onLogin }) => {
           {submitting ? 'loading...' : 'login'}
         </button>
       </form>
+
+      <button type="button" onClick={onSwitchToSignup}>
+        don't have an account? create one
+      </button>
 
       {error && <p>{error}</p>}
     </section>
