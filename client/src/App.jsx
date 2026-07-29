@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { getMe, logout } from "./api"
 import LoginForm from "./LoginForm"
+import SignupForm from "./SignupForm"
 
 function App() {
 
@@ -11,6 +12,8 @@ function App() {
   const [ submitting, setSubmitting ] = useState(false)
 
   const [ authError, setAuthError ] = useState(false)
+
+  const [ showSignup, setShowSignup ] = useState(false)
 
   useEffect(() => {
     async function checkAuth() {
@@ -60,7 +63,11 @@ function App() {
     )
   }
 
-  return <LoginForm onLogin={setUser} />
+  if (showSignup) {
+    return <SignupForm onSignup={setUser} onSwitchToLogin={() => setShowSignup(false)}/>
+  }
+
+  return <LoginForm onLogin={setUser} onSwitchToSignup={() => setShowSignup(true)}/>
 }
 
 export default App

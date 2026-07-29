@@ -4,6 +4,16 @@ import bcrypt from 'bcrypt'
 import { eq } from 'drizzle-orm'
 import crypto from 'crypto'
 
+async function createSession(userId) {
+  const generatedToken = crypto.randomBytes(32).toString('hex')
+  const tokenExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+  await db
+    .insert(sessions)
+    .values({ id: generatedToken, userId: userId, expiresAt: tokenExpiry })
+
+  return generatedToken
+}
+
 export async function signup(email, password) {
   const existing = await db.select().from(users).where(eq(users.email, email))
 
@@ -18,7 +28,9 @@ export async function signup(email, password) {
     .values({ email, passwordHash })
     .returning({ id: users.id, email: users.email, createdAt: users.createdAt })
 
-  return newUser
+  const token = await createSession(newUser.id)
+
+  return { token, user: newUser }
 }
 
 export async function login(email, password) {
@@ -40,17 +52,10 @@ export async function login(email, password) {
     throw new Error(errorMessage)
   }
 
-  const generatedToken = crypto.randomBytes(32).toString('hex')
-
-  const tokenExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-
-  await db
-    .insert(sessions)
-    .values({ id: generatedToken, userId: dbUser.id, expiresAt: tokenExpiry })
-
+  const token = await createSession(dbUser.id)
   const user = { id: dbUser.id, email: dbUser.email, createdAt: dbUser.createdAt }
 
-  return { token: generatedToken, user: user }
+  return { token, user }
 }
 
 export async function logout(token) {

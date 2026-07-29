@@ -13,7 +13,7 @@ describe('signup service', () => {
   })
 
   it('creates a user and returns safe fields', async () => {
-    const user = await signup(exampleEmail, examplePassword)
+    const { user } = await signup(exampleEmail, examplePassword)
     expect(user.email).toBe(exampleEmail)
     expect(user.id).toBeDefined()
     expect(user.passwordHash).toBeUndefined()
