@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { getMe, logout } from "./api"
+import { getMe, logout, getNotes, createNote } from "./api"
 import LoginForm from "./LoginForm"
 import SignupForm from "./SignupForm"
 
@@ -14,6 +14,12 @@ function App() {
   const [ authError, setAuthError ] = useState(false)
 
   const [ showSignup, setShowSignup ] = useState(false)
+
+  const [ notes, setNotes ] = useState([])
+  const [ notesLoading, setNotesLoading ] = useState(true)
+  const [ notesError, setNotesError ] = useState(false)
+
+  const [ creating, setCreating ] = useState(false)
 
   useEffect(() => {
     async function checkAuth() {
@@ -33,6 +39,27 @@ function App() {
     checkAuth()
   }, [])
 
+  useEffect(() => {
+    if (!user) return
+
+    async function loadNotes() {
+
+      setNotesLoading(true)
+      setNotesError(false)
+      setNotes([])
+
+      try {
+        const fetchedNotes = await getNotes()
+        setNotes(fetchedNotes)
+      } catch {
+        setNotesError(true)
+      } finally {
+        setNotesLoading(false)
+      }
+    }
+    loadNotes()
+  }, [user])
+
 
   const handleLogout = async () => {
     setError(null)
@@ -41,10 +68,25 @@ function App() {
     try {
       await logout()
       setUser(null)
+      setNotes([])
     } catch {
       setError('Could not log out, try again')
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleCreateNote = async () => {
+    setError(null)
+    setCreating(true)
+
+    try {
+      const newNote = await createNote()
+      setNotes((prev) => [...prev, newNote])
+    } catch {
+      setError('Could not create note, try again')
+    } finally {
+      setCreating(false)
     }
   }
 
@@ -53,13 +95,36 @@ function App() {
 
   if (user) {
     return (
-      <div>
+      <section className="vertical-section">
+
         <p>logged in as {user.email}</p>
         <button onClick={handleLogout} disabled={submitting}>
           {submitting ? 'logging out...' : 'logout'}
         </button>
+
         {error && <p>{error}</p>}
-      </div>
+
+        {notesLoading && <p>loading your notes...</p>}
+        {notesError && <p>your notes could not be loaded, please try refreshing the page</p>}
+
+        {!notesLoading && !notesError && (
+          notes.length === 0
+          ? <p>no notes yet</p>
+          :
+          <ul>
+            {notes.map((individualNote) => (
+              <li key={individualNote.id}>
+                {individualNote.title}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <button onClick={handleCreateNote} disabled={creating}>
+          {creating ? 'creating note...' : '+ create a new note'}
+        </button>
+
+      </section>
     )
   }
 
