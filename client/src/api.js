@@ -35,3 +35,11 @@ export async function signup(email, password) {
 export async function logout() {
   return request('/auth/logout', { method: 'POST' })
 }
+
+export async function getNotes() {
+  return request('/notes')
+}
+
+export async function createNote() {
+  return request('/notes', { method: 'POST', body: {} })
+}
