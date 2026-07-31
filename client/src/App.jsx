@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
-import { getMe, logout, getNotes, createNote, updateNote } from "./api"
+import { getMe, logout, getNotes, createNote } from "./api"
 import LoginForm from "./LoginForm"
 import SignupForm from "./SignupForm"
+import NoteEditor from "./NoteEditor"
 
 function App() {
 
@@ -22,8 +23,6 @@ function App() {
   const [ creating, setCreating ] = useState(false)
 
   const [ selectedNoteId, setSelectedNoteId ] = useState(null)
-  const [ lastSavedContent, setLastSavedContent ] = useState('')
-  const [ saveError, setSaveError ] = useState(false)
 
   useEffect(() => {
     async function checkAuth() {
@@ -96,38 +95,13 @@ function App() {
 
   const selectedNote = notes.find((note) => note.id === selectedNoteId)
 
-  // Resetting on note switch; goes away when NoteEditor is extracted
-  // and unmounting handles this via a key prop.
-  useEffect(() => {
-    if (!selectedNote) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSaveError(false)
-    setLastSavedContent(selectedNote.content ?? '')
-  }, [selectedNoteId])
-
-  useEffect(() => {
-    if (!selectedNote) return
-    if (selectedNote.content === lastSavedContent) return
-
-    const timerId = setTimeout(() => {
-      async function save() {
-        try {
-          setSaveError(false)
-          await updateNote(selectedNoteId, undefined, selectedNote.content)
-          setLastSavedContent(selectedNote.content)
-        } catch {
-          setSaveError(true)
-        }
-      }
-      save()
-
-    }, 500)
-
-    return () => clearTimeout(timerId)
-
-  }, [selectedNote?.content, selectedNoteId])
-
-  const unsaved = selectedNote?.content !== lastSavedContent
+  const handleContentChange = (newContent) => {
+    setNotes((prev) =>
+      prev.map((note) =>
+        note.id === selectedNoteId ? { ...note, content: newContent } : note
+      )
+    )
+  }
 
   if (loading) return <p>loading...</p>
   if (authError) return <p>Something went wrong. Please refresh.</p>
@@ -136,23 +110,7 @@ function App() {
     return (
       <section className="vertical-section">
       {selectedNoteId ?
-        <div className="vertical-column">
-          <span>{selectedNote.title}</span>
-
-          {saveError ? <p>couldn't save; your changes are still here</p> : unsaved ? <p>saving...</p> : <p>all changes saved</p>}
-          <textarea
-            value={selectedNote.content ?? ''}
-            onChange={(e) => setNotes((prev) =>
-              prev.map((note) =>
-                note.id === selectedNoteId ? { ...note, content: e.target.value } : note
-              )
-            )}
-          />
-
-          <button onClick={() => setSelectedNoteId(null)}>
-            {'<'} go back
-          </button>
-        </div>
+        <NoteEditor key={selectedNoteId} note={selectedNote} onContentChange={handleContentChange} onBack={() => setSelectedNoteId(null)} />
         :
         <div>
           <p>logged in as {user.email}</p>
