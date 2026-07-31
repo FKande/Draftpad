@@ -43,3 +43,7 @@ export async function getNotes() {
 export async function createNote() {
   return request('/notes', { method: 'POST', body: {} })
 }
+
+export async function updateNote(id, title, content) {
+  return request(`/notes/${id}`, { method: 'PATCH', body: { title, content } })
+}

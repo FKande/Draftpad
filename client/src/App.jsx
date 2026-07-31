@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { getMe, logout, getNotes, createNote } from "./api"
+import { getMe, logout, getNotes, createNote, updateNote } from "./api"
 import LoginForm from "./LoginForm"
 import SignupForm from "./SignupForm"
 
@@ -20,6 +20,10 @@ function App() {
   const [ notesError, setNotesError ] = useState(false)
 
   const [ creating, setCreating ] = useState(false)
+
+  const [ selectedNoteId, setSelectedNoteId ] = useState(null)
+  const [ lastSavedContent, setLastSavedContent ] = useState('')
+  const [ saveError, setSaveError ] = useState(false)
 
   useEffect(() => {
     async function checkAuth() {
@@ -90,40 +94,95 @@ function App() {
     }
   }
 
+  const selectedNote = notes.find((note) => note.id === selectedNoteId)
+
+  // Resetting on note switch; goes away when NoteEditor is extracted
+  // and unmounting handles this via a key prop.
+  useEffect(() => {
+    if (!selectedNote) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSaveError(false)
+    setLastSavedContent(selectedNote.content ?? '')
+  }, [selectedNoteId])
+
+  useEffect(() => {
+    if (!selectedNote) return
+    if (selectedNote.content === lastSavedContent) return
+
+    const timerId = setTimeout(() => {
+      async function save() {
+        try {
+          setSaveError(false)
+          await updateNote(selectedNoteId, undefined, selectedNote.content)
+          setLastSavedContent(selectedNote.content)
+        } catch {
+          setSaveError(true)
+        }
+      }
+      save()
+
+    }, 500)
+
+    return () => clearTimeout(timerId)
+
+  }, [selectedNote?.content, selectedNoteId])
+
+  const unsaved = selectedNote?.content !== lastSavedContent
+
   if (loading) return <p>loading...</p>
   if (authError) return <p>Something went wrong. Please refresh.</p>
 
   if (user) {
     return (
       <section className="vertical-section">
+      {selectedNoteId ?
+        <div className="vertical-column">
+          <span>{selectedNote.title}</span>
 
-        <p>logged in as {user.email}</p>
-        <button onClick={handleLogout} disabled={submitting}>
-          {submitting ? 'logging out...' : 'logout'}
-        </button>
+          {saveError ? <p>couldn't save; your changes are still here</p> : unsaved ? <p>saving...</p> : <p>all changes saved</p>}
+          <textarea
+            value={selectedNote.content ?? ''}
+            onChange={(e) => setNotes((prev) =>
+              prev.map((note) =>
+                note.id === selectedNoteId ? { ...note, content: e.target.value } : note
+              )
+            )}
+          />
 
-        {error && <p>{error}</p>}
+          <button onClick={() => setSelectedNoteId(null)}>
+            {'<'} go back
+          </button>
+        </div>
+        :
+        <div>
+          <p>logged in as {user.email}</p>
+          <button onClick={handleLogout} disabled={submitting}>
+            {submitting ? 'logging out...' : 'logout'}
+          </button>
 
-        {notesLoading && <p>loading your notes...</p>}
-        {notesError && <p>your notes could not be loaded, please try refreshing the page</p>}
+          {error && <p>{error}</p>}
 
-        {!notesLoading && !notesError && (
-          notes.length === 0
-          ? <p>no notes yet</p>
-          :
-          <ul>
-            {notes.map((individualNote) => (
-              <li key={individualNote.id}>
-                {individualNote.title}
-              </li>
-            ))}
-          </ul>
-        )}
+          {notesLoading && <p>loading your notes...</p>}
+          {notesError && <p>your notes could not be loaded, please try refreshing the page</p>}
 
-        <button onClick={handleCreateNote} disabled={creating}>
-          {creating ? 'creating note...' : '+ create a new note'}
-        </button>
+          {!notesLoading && !notesError && (
+            notes.length === 0
+            ? <p>no notes yet</p>
+            :
+            <ul>
+              {notes.map((individualNote) => (
+                <li key={individualNote.id} onClick={() => setSelectedNoteId(individualNote.id)}>
+                  {individualNote.title}
+                </li>
+              ))}
+            </ul>
+          )}
 
+          <button onClick={handleCreateNote} disabled={creating}>
+            {creating ? 'creating note...' : '+ create a new note'}
+          </button>
+        </div>
+      }
       </section>
     )
   }

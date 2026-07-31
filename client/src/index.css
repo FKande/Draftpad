@@ -55,6 +55,11 @@ button {
   flex-direction: column;
 }
 
+.vertical-column {
+  display: flex;
+  flex-direction: column;
+}
+
 .form-body {
   display: flex;
   flex-direction: column;
