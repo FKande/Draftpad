@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { getMe, logout, getNotes, createNote } from "./api"
+import { getMe, logout, getNotes, createNote, deleteNote } from "./api"
 import LoginForm from "./LoginForm"
 import SignupForm from "./SignupForm"
 import NoteEditor from "./NoteEditor"
@@ -103,6 +103,20 @@ function App() {
     )
   }
 
+  const handleDeleteNote = async (id) => {
+
+    if (!window.confirm('Delete this note?')) return
+
+    setError(null)
+
+    try {
+      await deleteNote(id)
+      setNotes((prev) => prev.filter((note) => note.id !== id))
+    } catch {
+      setError('could not delete, try again')
+    }
+  }
+
   if (loading) return <p>loading...</p>
   if (authError) return <p>Something went wrong. Please refresh.</p>
 
@@ -131,6 +145,9 @@ function App() {
               {notes.map((individualNote) => (
                 <li key={individualNote.id} onClick={() => setSelectedNoteId(individualNote.id)}>
                   {individualNote.title}
+                  <button onClick={(e) => { e.stopPropagation(); handleDeleteNote(individualNote.id)}}>
+                    delete
+                  </button>
                 </li>
               ))}
             </ul>
