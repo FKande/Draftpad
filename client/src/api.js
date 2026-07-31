@@ -9,7 +9,7 @@ async function request(path, options = {}) {
     body: options.body ? JSON.stringify(options.body) : undefined,
   })
 
-  const data = await res.json()
+  const data = res.status === 204 ? null : await res.json()
 
   if (!res.ok) {
     const err = new Error(data.error)
@@ -46,4 +46,8 @@ export async function createNote() {
 
 export async function updateNote(id, title, content) {
   return request(`/notes/${id}`, { method: 'PATCH', body: { title, content } })
+}
+
+export async function deleteNote(id) {
+  return request(`/notes/${id}`, { method: 'DELETE' })
 }
