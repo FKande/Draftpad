@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { getMe, logout, getNotes, createNote, deleteNote } from './api'
 import LoginForm from './LoginForm'
 import SignupForm from './SignupForm'
-import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import RequireAuth from './RequireAuth'
 import NoteEditorRoute from './NoteEditorRoute'
+import NotesList from './NotesList'
 
 function App() {
-
   const navigate = useNavigate()
 
   const [user, setUser] = useState(null)
@@ -111,7 +111,9 @@ function App() {
 
   const handleContentChange = (id, newContent) => {
     setNotes((prev) =>
-      prev.map((note) => (note.id === id ? { ...note, content: newContent } : note))
+      prev.map((note) =>
+        note.id === id ? { ...note, content: newContent } : note,
+      ),
     )
   }
 
@@ -121,60 +123,55 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/notes" />} />
-      <Route path="/login" element={
-        user ? <Navigate to="/notes" replace /> : <LoginForm onLogin={handleAuthSuccess} />
-      } />
-      <Route path="/signup" element={
-        user ? <Navigate to="/notes" replace /> : <SignupForm onSignup={handleAuthSuccess} />
-      } />
-      <Route path="/notes/:id" element={
-        <RequireAuth user={user}>
-          <NoteEditorRoute
-            notes={notes}
-            notesLoading={notesLoading}
-            onContentChange={handleContentChange}
-            onBack={() => navigate('/notes')}
-          />
-        </RequireAuth>
-      } />
+      <Route
+        path="/login"
+        element={
+          user ? (
+            <Navigate to="/notes" replace />
+          ) : (
+            <LoginForm onLogin={handleAuthSuccess} />
+          )
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          user ? (
+            <Navigate to="/notes" replace />
+          ) : (
+            <SignupForm onSignup={handleAuthSuccess} />
+          )
+        }
+      />
+      <Route
+        path="/notes/:id"
+        element={
+          <RequireAuth user={user}>
+            <NoteEditorRoute
+              notes={notes}
+              notesLoading={notesLoading}
+              onContentChange={handleContentChange}
+              onBack={() => navigate('/notes')}
+            />
+          </RequireAuth>
+        }
+      />
       <Route
         path="/notes"
         element={
           <RequireAuth user={user}>
-            <div>
-              <p>logged in as {user?.email}</p>
-              <button onClick={handleLogout} disabled={submitting}>
-                {submitting ? 'logging out...' : 'logout'}
-              </button>
-              {error && <p>{error}</p>}
-              {notesLoading && <p>loading your notes...</p>}
-              {notesError && (
-                <p>
-                  your notes could not be loaded, please try refreshing the page
-                </p>
-              )}
-              {!notesLoading &&
-                !notesError &&
-                (notes.length === 0 ? (
-                  <p>no notes yet</p>
-                ) : (
-                  <ul>
-                    {notes.map((individualNote) => (
-                      <li key={individualNote.id}>
-                        <Link to={`/notes/${individualNote.id}`}>{individualNote.title}</Link>
-                        <button
-                          onClick={() => handleDeleteNote(individualNote.id)}
-                        >
-                          delete
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                ))}
-              <button onClick={handleCreateNote} disabled={creating}>
-                {creating ? 'creating note...' : '+ create a new note'}
-              </button>
-            </div>
+            <NotesList
+              user={user}
+              notes={notes}
+              notesLoading={notesLoading}
+              notesError={notesError}
+              creating={creating}
+              submitting={submitting}
+              error={error}
+              onCreate={handleCreateNote}
+              onDelete={handleDeleteNote}
+              onLogout={handleLogout}
+            />
           </RequireAuth>
         }
       />
