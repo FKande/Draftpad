@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { signup } from "./api"
+import { Link } from 'react-router-dom'
 
-
-const SignupForm = ({ onSignup, onSwitchToLogin }) => {
+const SignupForm = ({ onSignup }) => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -65,9 +65,7 @@ const SignupForm = ({ onSignup, onSwitchToLogin }) => {
       {password && !passwordLongEnough && <p>Password must be at least 8 characters</p>}
       {confirmPassword && !passwordsMatch && <p>Passwords do not match</p>}
 
-      <button type="button" onClick={onSwitchToLogin}>
-        already have an account? login
-      </button>
+      <Link to="/login">already have an account? login</Link>
 
       {error && <p>{error}</p>}
 

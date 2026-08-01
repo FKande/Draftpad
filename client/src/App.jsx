@@ -1,28 +1,33 @@
-import { useState, useEffect } from "react"
-import { getMe, logout, getNotes, createNote, deleteNote } from "./api"
-import LoginForm from "./LoginForm"
-import SignupForm from "./SignupForm"
-import NoteEditor from "./NoteEditor"
+import { useState, useEffect } from 'react'
+import { getMe, logout, getNotes, createNote, deleteNote } from './api'
+import LoginForm from './LoginForm'
+import SignupForm from './SignupForm'
+import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom'
+import RequireAuth from './RequireAuth'
+import NoteEditorRoute from './NoteEditorRoute'
 
 function App() {
 
-  const [ user, setUser ] = useState(null)
-  const [ loading, setLoading ] = useState(true)
+  const navigate = useNavigate()
 
-  const [ error, setError ] = useState(null)
-  const [ submitting, setSubmitting ] = useState(false)
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  const [ authError, setAuthError ] = useState(false)
+  const [error, setError] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
 
-  const [ showSignup, setShowSignup ] = useState(false)
+  const [authError, setAuthError] = useState(false)
 
-  const [ notes, setNotes ] = useState([])
-  const [ notesLoading, setNotesLoading ] = useState(true)
-  const [ notesError, setNotesError ] = useState(false)
+  const [notes, setNotes] = useState([])
+  const [notesLoading, setNotesLoading] = useState(true)
+  const [notesError, setNotesError] = useState(false)
 
-  const [ creating, setCreating ] = useState(false)
+  const [creating, setCreating] = useState(false)
 
-  const [ selectedNoteId, setSelectedNoteId ] = useState(null)
+  const handleAuthSuccess = (loggedInUser) => {
+    setUser(loggedInUser)
+    navigate('/notes')
+  }
 
   useEffect(() => {
     async function checkAuth() {
@@ -46,7 +51,6 @@ function App() {
     if (!user) return
 
     async function loadNotes() {
-
       setNotesLoading(true)
       setNotesError(false)
       setNotes([])
@@ -62,7 +66,6 @@ function App() {
     }
     loadNotes()
   }, [user])
-
 
   const handleLogout = async () => {
     setError(null)
@@ -93,18 +96,7 @@ function App() {
     }
   }
 
-  const selectedNote = notes.find((note) => note.id === selectedNoteId)
-
-  const handleContentChange = (newContent) => {
-    setNotes((prev) =>
-      prev.map((note) =>
-        note.id === selectedNoteId ? { ...note, content: newContent } : note
-      )
-    )
-  }
-
   const handleDeleteNote = async (id) => {
-
     if (!window.confirm('Delete this note?')) return
 
     setError(null)
@@ -117,56 +109,77 @@ function App() {
     }
   }
 
-  if (loading) return <p>loading...</p>
-  if (authError) return <p>Something went wrong. Please refresh.</p>
-
-  if (user) {
-    return (
-      <section className="vertical-section">
-      {selectedNoteId ?
-        <NoteEditor key={selectedNoteId} note={selectedNote} onContentChange={handleContentChange} onBack={() => setSelectedNoteId(null)} />
-        :
-        <div>
-          <p>logged in as {user.email}</p>
-          <button onClick={handleLogout} disabled={submitting}>
-            {submitting ? 'logging out...' : 'logout'}
-          </button>
-
-          {error && <p>{error}</p>}
-
-          {notesLoading && <p>loading your notes...</p>}
-          {notesError && <p>your notes could not be loaded, please try refreshing the page</p>}
-
-          {!notesLoading && !notesError && (
-            notes.length === 0
-            ? <p>no notes yet</p>
-            :
-            <ul>
-              {notes.map((individualNote) => (
-                <li key={individualNote.id} onClick={() => setSelectedNoteId(individualNote.id)}>
-                  {individualNote.title}
-                  <button onClick={(e) => { e.stopPropagation(); handleDeleteNote(individualNote.id)}}>
-                    delete
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <button onClick={handleCreateNote} disabled={creating}>
-            {creating ? 'creating note...' : '+ create a new note'}
-          </button>
-        </div>
-      }
-      </section>
+  const handleContentChange = (id, newContent) => {
+    setNotes((prev) =>
+      prev.map((note) => (note.id === id ? { ...note, content: newContent } : note))
     )
   }
 
-  if (showSignup) {
-    return <SignupForm onSignup={setUser} onSwitchToLogin={() => setShowSignup(false)}/>
-  }
+  if (loading) return <p>loading...</p>
+  if (authError) return <p>Something went wrong. Please refresh.</p>
 
-  return <LoginForm onLogin={setUser} onSwitchToSignup={() => setShowSignup(true)}/>
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/notes" />} />
+      <Route path="/login" element={
+        user ? <Navigate to="/notes" replace /> : <LoginForm onLogin={handleAuthSuccess} />
+      } />
+      <Route path="/signup" element={
+        user ? <Navigate to="/notes" replace /> : <SignupForm onSignup={handleAuthSuccess} />
+      } />
+      <Route path="/notes/:id" element={
+        <RequireAuth user={user}>
+          <NoteEditorRoute
+            notes={notes}
+            notesLoading={notesLoading}
+            onContentChange={handleContentChange}
+            onBack={() => navigate('/notes')}
+          />
+        </RequireAuth>
+      } />
+      <Route
+        path="/notes"
+        element={
+          <RequireAuth user={user}>
+            <div>
+              <p>logged in as {user?.email}</p>
+              <button onClick={handleLogout} disabled={submitting}>
+                {submitting ? 'logging out...' : 'logout'}
+              </button>
+              {error && <p>{error}</p>}
+              {notesLoading && <p>loading your notes...</p>}
+              {notesError && (
+                <p>
+                  your notes could not be loaded, please try refreshing the page
+                </p>
+              )}
+              {!notesLoading &&
+                !notesError &&
+                (notes.length === 0 ? (
+                  <p>no notes yet</p>
+                ) : (
+                  <ul>
+                    {notes.map((individualNote) => (
+                      <li key={individualNote.id}>
+                        <Link to={`/notes/${individualNote.id}`}>{individualNote.title}</Link>
+                        <button
+                          onClick={() => handleDeleteNote(individualNote.id)}
+                        >
+                          delete
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ))}
+              <button onClick={handleCreateNote} disabled={creating}>
+                {creating ? 'creating note...' : '+ create a new note'}
+              </button>
+            </div>
+          </RequireAuth>
+        }
+      />
+    </Routes>
+  )
 }
 
 export default App

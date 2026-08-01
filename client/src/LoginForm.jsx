@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { login } from './api'
+import { Link } from 'react-router-dom'
 
-const LoginForm = ({ onLogin, onSwitchToSignup }) => {
+const LoginForm = ({ onLogin }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
@@ -45,9 +46,7 @@ const LoginForm = ({ onLogin, onSwitchToSignup }) => {
         </button>
       </form>
 
-      <button type="button" onClick={onSwitchToSignup}>
-        don't have an account? create one
-      </button>
+      <Link to="/signup">don't have an account? create one</Link>
 
       {error && <p>{error}</p>}
     </section>
