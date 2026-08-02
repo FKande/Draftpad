@@ -5,7 +5,7 @@ import SignupForm from './SignupForm'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import RequireAuth from './RequireAuth'
 import NoteEditorRoute from './NoteEditorRoute'
-import NotesList from './NotesList'
+import NotesLayout from './NotesLayout'
 
 function App() {
   const navigate = useNavigate()
@@ -144,23 +144,10 @@ function App() {
         }
       />
       <Route
-        path="/notes/:id"
-        element={
-          <RequireAuth user={user}>
-            <NoteEditorRoute
-              notes={notes}
-              notesLoading={notesLoading}
-              onContentChange={handleContentChange}
-              onBack={() => navigate('/notes')}
-            />
-          </RequireAuth>
-        }
-      />
-      <Route
         path="/notes"
         element={
           <RequireAuth user={user}>
-            <NotesList
+            <NotesLayout
               user={user}
               notes={notes}
               notesLoading={notesLoading}
@@ -174,7 +161,16 @@ function App() {
             />
           </RequireAuth>
         }
-      />
+      >
+        <Route index element={<p>pick a note</p>} />
+        <Route path=":id" element={
+          <NoteEditorRoute
+            notes={notes}
+            notesLoading={notesLoading}
+            onContentChange={handleContentChange}
+          />
+        }/>
+      </Route>
     </Routes>
   )
 }

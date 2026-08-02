@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { updateNote } from './api'
 
-const NoteEditor = ({ note, onContentChange, onBack }) => {
+const NoteEditor = ({ note, onContentChange }) => {
 
   const [ lastSavedContent, setLastSavedContent ] = useState(note.content ?? '')
   const [ saveError, setSaveError ] = useState(false)
@@ -29,15 +29,6 @@ const NoteEditor = ({ note, onContentChange, onBack }) => {
 
   const unsaved = note.content !== lastSavedContent
 
-  // Fire and forget: the component is unmounting, so there's nowhere to
-  // surface a failure. Swallowing it until App owns a toast system.
-  const handleBack = () => {
-    if (unsaved) {
-      updateNote(note.id, undefined, note.content).catch(() => {})
-    }
-    onBack()
-  }
-
   return (
     <div className="vertical-column">
       <span>{note.title}</span>
@@ -49,9 +40,6 @@ const NoteEditor = ({ note, onContentChange, onBack }) => {
 
       />
 
-      <button onClick={handleBack}>
-        {'<'} go back
-      </button>
     </div>
   )
 }
