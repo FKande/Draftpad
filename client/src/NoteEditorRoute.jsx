@@ -12,6 +12,7 @@ const NoteEditorRoute = ({ notes, notesLoading, onContentChange }) => {
     <NoteEditor
       note={note}
       onContentChange={(newContent) => onContentChange(id, newContent)}
+      key={note.id}
     />
   )
 }
