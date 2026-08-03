@@ -1,0 +1,267 @@
+/* ============================================================================
+   DRAFTPAD TYPOGRAPHY
+
+   Text styles are classes, not variables, because a text style is a
+   BUNDLE: family, size, line-height, letter-spacing, weight, colour.
+   A CSS variable can only hold one value, so a class is the right shape.
+
+   Four families of style, following the Vercel split:
+
+     heading-*   page and section titles. tight leading, tight tracking.
+     label-*     single line. buttons, menu items, form labels, sidebar
+                 rows. leading is generous enough to sit beside an icon
+                 without the icon looking cramped.
+     copy-*      multiple lines. paragraphs, note body, descriptions.
+                 higher leading than label so long text stays readable.
+     button-*    only inside buttons. leading 1 because a button's height
+                 comes from its padding, not its line box.
+
+   The number in the name is the pixel size. Same convention as Vercel:
+   .copy-14 is 14px copy. No small/medium/large guessing.
+
+   Sizes are always even. If a design calls for 13 or 15, round to the
+   neighbour rather than adding a step, or the scale stops being a scale.
+
+   THE ONLY PROPERTY A COMPONENT MAY OVERRIDE IS COLOUR, and only via a
+   modifier from the closed set at the bottom of this file.
+   If a size, weight, or tracking is wrong for your case, the style is
+   wrong or you need a new one. Do not patch it at the call site.
+
+   For a heavier run inside a style, nest <strong>. Do not swap classes.
+     <p class="copy-14">Saved <strong>2 minutes ago</strong></p>
+   ============================================================================ */
+
+/* ----------------------------------------------------------------------------
+   HEADINGS
+   Tracking gets tighter as size grows, which is what stops large text
+   looking loose. Leading approaches 1 at the top of the scale.
+   ---------------------------------------------------------------------------- */
+
+.heading-48 {
+  font-family: var(--font-sans);
+  font-size: 48px;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-weight: var(--weight-semibold);
+  color: var(--fg-default);
+}
+
+.heading-32 {
+  font-family: var(--font-sans);
+  font-size: 32px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: var(--weight-semibold);
+  color: var(--fg-default);
+}
+
+.heading-24 {
+  font-family: var(--font-sans);
+  font-size: 24px;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  font-weight: var(--weight-semibold);
+  color: var(--fg-default);
+}
+
+.heading-20 {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: var(--weight-semibold);
+  color: var(--fg-default);
+}
+
+.heading-16 {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  font-weight: var(--weight-semibold);
+  color: var(--fg-default);
+}
+
+.heading-14 {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: var(--weight-semibold);
+  color: var(--fg-default);
+}
+
+/* ----------------------------------------------------------------------------
+   LABELS
+   Single line. Medium weight so they read as interface rather than prose.
+   ---------------------------------------------------------------------------- */
+
+.label-16 {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  font-weight: var(--weight-medium);
+  color: var(--fg-default);
+}
+
+.label-14 {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: var(--weight-medium);
+  color: var(--fg-default);
+}
+
+.label-12 {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.35;
+  letter-spacing: 0;
+  font-weight: var(--weight-medium);
+  color: var(--fg-default);
+}
+
+/* ----------------------------------------------------------------------------
+   COPY
+   Multi-line. Regular weight, looser leading.
+   ---------------------------------------------------------------------------- */
+
+.copy-20 {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+  font-weight: var(--weight-regular);
+  color: var(--fg-default);
+}
+
+.copy-16 {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  font-weight: var(--weight-regular);
+  color: var(--fg-default);
+}
+
+.copy-14 {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  font-weight: var(--weight-regular);
+  color: var(--fg-default);
+}
+
+.copy-12 {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  font-weight: var(--weight-regular);
+  color: var(--fg-default);
+}
+
+/* ----------------------------------------------------------------------------
+   BUTTONS
+   Leading 1 on purpose: a button's height comes from its padding.
+   No colour: the button variant owns that, since it depends on the fill.
+   ---------------------------------------------------------------------------- */
+
+.button-16 {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  font-weight: var(--weight-medium);
+}
+
+.button-14 {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-weight: var(--weight-medium);
+}
+
+.button-12 {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0;
+  font-weight: var(--weight-medium);
+}
+
+/* ----------------------------------------------------------------------------
+   LOGO
+   The only place Caslon appears.
+   ---------------------------------------------------------------------------- */
+
+.logo {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-weight: var(--weight-regular);
+  color: var(--fg-default);
+}
+
+/* ----------------------------------------------------------------------------
+   STRONG MODIFIER
+   Works inside any style above. One weight step up, nothing else changes.
+   ---------------------------------------------------------------------------- */
+
+.heading-48 strong,
+.heading-32 strong,
+.heading-24 strong,
+.heading-20 strong,
+.heading-16 strong,
+.heading-14 strong {
+  font-weight: var(--weight-bold);
+}
+
+.label-16 strong,
+.label-14 strong,
+.label-12 strong,
+.copy-20 strong,
+.copy-16 strong,
+.copy-14 strong,
+.copy-12 strong {
+  font-weight: var(--weight-semibold);
+}
+
+/* ----------------------------------------------------------------------------
+   COLOUR MODIFIERS
+
+   The only permitted override on a text style, and the set is CLOSED.
+   Each sets `color` and nothing else, so it composes with any style
+   above without side effects:
+
+     <label class="label-14">Password</label>
+     <p class="label-12 text-danger">Must be at least 8 characters</p>
+     <span class="copy-14 text-muted">Saved</span>
+
+   Deliberately NOT here:
+     - a default. Every style above already sets --fg-default.
+     - anything that changes weight or size. That would make it a second
+       text style rather than a modifier, and it would break the rule
+       that colour is the only override.
+
+   If you need a colour that is not in this list, the missing thing is a
+   token in tokens.css, not a class here.
+   ---------------------------------------------------------------------------- */
+
+.text-muted {
+  color: var(--fg-muted);
+}
+
+.text-subtle {
+  color: var(--fg-subtle);
+}
+
+.text-danger {
+  color: var(--fg-danger);
+}
+

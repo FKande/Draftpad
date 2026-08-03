@@ -1,17 +1,49 @@
+@import './tokens.css';
+@import './typography.css';
+
+/* ============================================================================
+   FONTS
+   Self-hosted from /public/fonts. font-display: swap renders a fallback
+   immediately rather than hiding text until the file arrives.
+   ============================================================================ */
+
+@font-face {
+  font-family: 'Haskoy';
+  src: url('/fonts/Haskoy-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Caslon';
+  src: url('/fonts/LibreCaslonCondensed-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================================================
+   RESET
+   ============================================================================ */
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
+/* No margins anywhere. Spacing is the parent's job, via gap. */
 * {
   margin: 0;
 }
 
 body {
-  font-family: system-ui, sans-serif;
-  line-height: 1.5;
+  font-family: var(--font-sans);
+  line-height: 1;
   -webkit-font-smoothing: antialiased;
+  background-color: var(--bg-page);
+  color: var(--fg-default);
 }
 
 img,
@@ -23,6 +55,8 @@ svg {
   max-width: 100%;
 }
 
+/* Form controls do not inherit type by default. This is one of the few
+   places the `font` shorthand is correct: you want all of it. */
 input,
 button,
 textarea,
@@ -44,25 +78,36 @@ h6 {
   isolation: isolate;
 }
 
-/* custom styling */
+/* ============================================================================
+   LINKS
 
-button {
-  width: fit-content;
+   One of the few element selectors that belongs global: the browser
+   default is blue and underlined, there is one link treatment app-wide,
+   and links appear in prose where no class can be attached.
+
+   Type comes from a class in the JSX, not from here, so the scale stays
+   the single source of truth for font properties.
+   ============================================================================ */
+
+a {
+  color: var(--fg-default);
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--duration-fast) var(--easing-standard);
 }
 
-.vertical-section {
-  display: flex;
-  flex-direction: column;
+a:hover {
+  text-decoration-color: var(--fg-default);
 }
 
-.vertical-column {
-  display: flex;
-  flex-direction: column;
+a:focus-visible {
+  outline: var(--border-width-md) solid var(--border-focus);
+  outline-offset: var(--space-2);
+  border-radius: var(--radius-sm);
 }
 
-.form-body {
-  display: flex;
-  flex-direction: column;
-  max-width: 400px;
-  gap: 8px;
+@media (prefers-reduced-motion: reduce) {
+  a {
+    transition: none;
+  }
 }

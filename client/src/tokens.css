@@ -1,0 +1,290 @@
+/* ============================================================================
+   DRAFTPAD TOKENS
+
+   Three tiers:
+
+     1. BRAND      raw values, no role. never used by a component.
+     2. ALIAS      raw values given a role. rarely used by a component.
+     3. MAPPED     what things are FOR. the only tier components touch.
+
+   Dark mode overrides tier 1 only. Tiers 2 and 3 are written once and
+   follow automatically, which is the entire point of the split.
+
+   Colours are OKLCH: oklch(lightness chroma hue)
+     L  0-100%    perceptual lightness
+     C  0-0.37    chroma, 0 is grey
+     H  0-360     hue angle
+
+   Hue is held constant down each scale and only lightness steps, which
+   is what keeps the ramp perceptually even. Chroma tapers at both ends
+   because very light and very dark colours cannot carry it.
+
+   TIER 3 USES BACKGROUND / FOREGROUND PAIRS.
+   Every --bg-x that can hold content has a matching --fg-on-x. The pair
+   is guaranteed legible by construction, so you cannot reach for the
+   wrong text colour on a given fill. Foregrounds that are not paired
+   with a specific fill (--fg-default, --fg-muted) are legible on any of
+   the page-level backgrounds.
+   ============================================================================ */
+
+/* ============================================================================
+   TIER 1: BRAND
+   ============================================================================ */
+
+:root {
+  /* --------------------------------------------------------------------
+     Warm neutral, hue 75.
+     12 steps, Radix convention. The step number means the same thing in
+     every scale:
+       1-2    app background, subtle background
+       3-5    component background: rest, hover, active
+       6-8    borders: subtle, interactive, strong and focus
+       9-10   solid fills
+       11-12  text: low contrast, high contrast
+     -------------------------------------------------------------------- */
+  --warm-1: oklch(99.3% 0.002 75);
+  --warm-2: oklch(98.2% 0.004 75);
+  --warm-3: oklch(96% 0.006 75);
+  --warm-4: oklch(94% 0.008 75);
+  --warm-5: oklch(91.8% 0.009 75);
+  --warm-6: oklch(89.2% 0.01 75);
+  --warm-7: oklch(86% 0.011 75);
+  --warm-8: oklch(79% 0.013 75);
+  --warm-9: oklch(55% 0.012 75);
+  --warm-10: oklch(50% 0.012 75);
+  --warm-11: oklch(44% 0.011 75);
+  --warm-12: oklch(20.5% 0.008 75);
+
+  /* Warm red, hue 27. Same 12 steps, same meanings. */
+  --red-1: oklch(99.3% 0.005 27);
+  --red-2: oklch(98.2% 0.01 27);
+  --red-3: oklch(95.5% 0.022 27);
+  --red-4: oklch(93% 0.035 27);
+  --red-5: oklch(90% 0.045 27);
+  --red-6: oklch(86.5% 0.055 27);
+  --red-7: oklch(81.5% 0.07 27);
+  --red-8: oklch(74% 0.095 27);
+  --red-9: oklch(57% 0.19 27);
+  --red-10: oklch(52.5% 0.185 27);
+  --red-11: oklch(50% 0.175 27);
+  --red-12: oklch(27% 0.075 27);
+
+  /* --------------------------------------------------------------------
+     One number scale. Everything numeric in tier 2 pulls from here:
+     spacing, radii, border widths, gaps, sizes.
+
+     Named by hundreds. A clean 100 is a multiple of 4. Values that break
+     the multiple-of-4 rule get a half-step name (25, 50, 75) so the
+     naming itself flags them as exceptions.
+     -------------------------------------------------------------------- */
+  --scale-0: 0px;
+  --scale-25: 1px;
+  --scale-50: 2px;
+  --scale-75: 3px;
+  --scale-100: 4px;
+  --scale-150: 6px;
+  --scale-200: 8px;
+  --scale-250: 10px;
+  --scale-300: 12px;
+  --scale-350: 14px;
+  --scale-400: 16px;
+  --scale-450: 18px;
+  --scale-500: 20px;
+  --scale-600: 24px;
+  --scale-700: 28px;
+  --scale-800: 32px;
+  --scale-900: 40px;
+  --scale-1000: 48px;
+  --scale-1100: 64px;
+  --scale-1200: 80px;
+  --scale-1300: 96px;
+
+  /* Font families */
+  --font-sans: 'Haskoy', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Caslon', Georgia, serif;
+
+  /* Font weights. Haskoy is variable, so these are real, not synthesised. */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Motion */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+/* ============================================================================
+   TIER 2: ALIAS
+   Raw values given a role. Swapping a hue happens here and nowhere else.
+   ============================================================================ */
+
+:root {
+  /* Colour roles. Draftpad has no accent colour by design, so "action"
+     resolves to the darkest neutral rather than a brand hue. That is a
+     decision made once, here. */
+  --neutral-1: var(--warm-1);
+  --neutral-2: var(--warm-2);
+  --neutral-3: var(--warm-3);
+  --neutral-4: var(--warm-4);
+  --neutral-5: var(--warm-5);
+  --neutral-6: var(--warm-6);
+  --neutral-7: var(--warm-7);
+  --neutral-8: var(--warm-8);
+  --neutral-9: var(--warm-9);
+  --neutral-10: var(--warm-10);
+  --neutral-11: var(--warm-11);
+  --neutral-12: var(--warm-12);
+
+  --danger-1: var(--red-1);
+  --danger-2: var(--red-2);
+  --danger-3: var(--red-3);
+  --danger-4: var(--red-4);
+  --danger-5: var(--red-5);
+  --danger-6: var(--red-6);
+  --danger-7: var(--red-7);
+  --danger-8: var(--red-8);
+  --danger-9: var(--red-9);
+  --danger-10: var(--red-10);
+  --danger-11: var(--red-11);
+  --danger-12: var(--red-12);
+
+  /* Spacing. The name IS the pixel value. 2px steps to 16, then 4, then 8. */
+  --space-0: var(--scale-0); /*  0 */
+  --space-1: var(--scale-25); /*  1, hairlines only */
+  --space-2: var(--scale-50);
+  --space-4: var(--scale-100);
+  --space-6: var(--scale-150);
+  --space-8: var(--scale-200);
+  --space-10: var(--scale-250);
+  --space-12: var(--scale-300);
+  --space-14: var(--scale-350);
+  --space-16: var(--scale-400);
+  --space-20: var(--scale-500);
+  --space-24: var(--scale-600);
+  --space-28: var(--scale-700);
+  --space-32: var(--scale-800);
+  --space-40: var(--scale-900);
+  --space-48: var(--scale-1000);
+  --space-64: var(--scale-1100);
+  --space-80: var(--scale-1200);
+
+  /* Radii. All even. */
+  --radius-none: var(--scale-0);
+  --radius-sm: var(--scale-50); /* 2 */
+  --radius-md: var(--scale-100); /* 4 */
+  --radius-lg: var(--scale-150); /* 6 */
+  --radius-xl: var(--scale-200); /* 8 */
+  --radius-round: 9999px;
+
+  /* Border widths */
+  --border-width-none: var(--scale-0);
+  --border-width-sm: var(--scale-25); /* 1, everything */
+  --border-width-md: var(--scale-50); /* 2, focus rings */
+}
+
+/* ============================================================================
+   TIER 3: MAPPED
+
+   Read a pair together. --bg-solid and --fg-on-solid always go on the
+   same element; picking one without the other is the bug this naming
+   prevents.
+
+   Unpaired foregrounds (--fg-default, --fg-muted, --fg-subtle) are safe
+   on any of --bg-page, --bg-subtle, --bg-surface and its hover/active
+   states, because all five are within a few lightness steps.
+   ============================================================================ */
+
+:root {
+  /* ---- Page and surfaces -------------------------------------------- */
+  --bg-page: var(--neutral-1);
+  --bg-subtle: var(--neutral-2);
+  --bg-surface: var(--neutral-3);
+  --bg-surface-hover: var(--neutral-4);
+  --bg-surface-active: var(--neutral-5);
+  --bg-selected: var(--neutral-4);
+
+  /* Foregrounds legible on any of the above */
+  --fg-default: var(--neutral-12);
+  --fg-muted: var(--neutral-11);
+  --fg-subtle: var(--neutral-9);
+
+  /* ---- Solid, the primary action ------------------------------------ */
+  --bg-solid: var(--neutral-12);
+  --bg-solid-hover: var(--neutral-11);
+  --bg-solid-active: var(--neutral-10);
+  --fg-on-solid: var(--neutral-1);
+
+  /* ---- Danger, destructive actions ---------------------------------- */
+  /* Subtle: a tinted background for inline error messages */
+  --bg-danger-subtle: var(--danger-3);
+  --bg-danger-subtle-hover: var(--danger-4);
+  --fg-on-danger-subtle: var(--danger-11);
+
+  /* Solid: a filled destructive button */
+  --bg-danger-solid: var(--danger-9);
+  --bg-danger-solid-hover: var(--danger-10);
+  --bg-danger-solid-active: var(--danger-11);
+  --fg-on-danger-solid: var(--danger-1);
+
+  /* Danger text on a normal page background */
+  --fg-danger: var(--danger-11);
+
+  /* ---- Disabled ------------------------------------------------------ */
+  --bg-disabled: var(--neutral-3);
+  --fg-on-disabled: var(--neutral-9);
+
+  /* ---- Borders ------------------------------------------------------- */
+  --border-subtle: var(--neutral-6);
+  --border-default: var(--neutral-7);
+  --border-strong: var(--neutral-8);
+  --border-solid: var(--neutral-12);
+  --border-solid-hover: var(--neutral-11);
+  --border-danger: var(--danger-8);
+  --border-danger-solid: var(--danger-9);
+  --border-disabled: var(--neutral-6);
+  --border-focus: var(--neutral-8);
+
+  /* ---- Inputs -------------------------------------------------------- */
+  --bg-input: var(--neutral-1);
+  --bg-input-hover: var(--neutral-2);
+  --fg-on-input: var(--neutral-12);
+  --fg-placeholder: var(--neutral-9);
+  --border-input: var(--neutral-7);
+  --border-input-hover: var(--neutral-8);
+  --border-input-danger: var(--danger-8);
+}
+
+/* ============================================================================
+   DARK MODE
+   Tier 1 only. Everything above follows.
+   ============================================================================ */
+
+[data-theme='dark'] {
+  --warm-1: oklch(17.8% 0.004 75);
+  --warm-2: oklch(21% 0.005 75);
+  --warm-3: oklch(25% 0.007 75);
+  --warm-4: oklch(28% 0.008 75);
+  --warm-5: oklch(31% 0.009 75);
+  --warm-6: oklch(35% 0.01 75);
+  --warm-7: oklch(40.5% 0.011 75);
+  --warm-8: oklch(49% 0.013 75);
+  --warm-9: oklch(55% 0.012 75);
+  --warm-10: oklch(60.5% 0.012 75);
+  --warm-11: oklch(73% 0.01 75);
+  --warm-12: oklch(94.5% 0.005 75);
+
+  --red-1: oklch(18.5% 0.012 27);
+  --red-2: oklch(21.5% 0.022 27);
+  --red-3: oklch(26.5% 0.045 27);
+  --red-4: oklch(30.5% 0.062 27);
+  --red-5: oklch(34.5% 0.072 27);
+  --red-6: oklch(39.5% 0.08 27);
+  --red-7: oklch(46% 0.095 27);
+  --red-8: oklch(55% 0.125 27);
+  --red-9: oklch(57% 0.19 27);
+  --red-10: oklch(62% 0.185 27);
+  --red-11: oklch(74% 0.16 27);
+  --red-12: oklch(91% 0.055 27);
+}
