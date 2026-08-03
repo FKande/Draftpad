@@ -1,9 +1,12 @@
-import { useState } from "react"
-import { signup } from "./api"
+import { useState } from 'react'
+import { signup } from './api'
 import { Link } from 'react-router-dom'
+import Button from './components/ui/Button'
+import Form from './components/ui/Form'
+import FormField from './components/ui/FormField'
+import Fieldset from './components/ui/Fieldset'
 
 const SignupForm = ({ onSignup }) => {
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -29,47 +32,60 @@ const SignupForm = ({ onSignup }) => {
   const passwordLongEnough = password.length >= 8
 
   return (
-    <section className="vertical-section">
-      <span>sign up</span>
-      <form onSubmit={handleSubmit} className="form-body">
+    <>
+      <h1 className="heading-24">Sign up</h1>
 
-        <label>email</label>
-        <input
-          required
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+      <Form onSubmit={handleSubmit}>
 
-        <label>password</label>
-        <input
-          required
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <Fieldset>
+          <FormField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <FormField
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            error={
+              password && !passwordLongEnough
+                ? 'Must be at least 8 characters'
+                : null
+            }
+          />
 
-        <label>confirm password</label>
-        <input
-          required
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
+          <FormField
+            label="Confirm Password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            error={
+              confirmPassword && !passwordsMatch ? 'Passwords do not match' : null
+            }
+          />
 
-        <button type="submit" disabled={submitting || !passwordsMatch || !passwordLongEnough}>
-          {submitting ? 'loading...' : 'sign up'}
-        </button>
-      </form>
+          {error && <p className="label-12 text-danger">{error}</p>}
 
-      {password && !passwordLongEnough && <p>Password must be at least 8 characters</p>}
-      {confirmPassword && !passwordsMatch && <p>Passwords do not match</p>}
+        </Fieldset>
 
-      <Link to="/login">already have an account? login</Link>
+        <Button
+          type="submit"
+          variant="primary"
+          fullWidth
+          loading={submitting}
+          disabled={!passwordsMatch || !passwordLongEnough}
+        >
+          Sign up
+        </Button>
+      </Form>
 
-      {error && <p>{error}</p>}
-
-    </section>
+      <Link className="label-14" to="/login">Already have an account? Login</Link>
+    </>
   )
 }
 

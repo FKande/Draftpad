@@ -6,6 +6,7 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import RequireAuth from './RequireAuth'
 import NoteEditorRoute from './NoteEditorRoute'
 import NotesLayout from './NotesLayout'
+import AuthLayout from './components/AuthLayout'
 
 function App() {
   const navigate = useNavigate()
@@ -126,20 +127,20 @@ function App() {
       <Route
         path="/login"
         element={
-          user ? (
-            <Navigate to="/notes" replace />
-          ) : (
-            <LoginForm onLogin={handleAuthSuccess} />
+          user ? <Navigate to="/notes" replace /> : (
+            <AuthLayout>
+              <LoginForm onLogin={handleAuthSuccess} />
+            </AuthLayout>
           )
         }
       />
       <Route
         path="/signup"
         element={
-          user ? (
-            <Navigate to="/notes" replace />
-          ) : (
-            <SignupForm onSignup={handleAuthSuccess} />
+          user ? <Navigate to="/notes" replace /> : (
+            <AuthLayout>
+              <SignupForm onSignup={handleAuthSuccess} />
+            </AuthLayout>
           )
         }
       />

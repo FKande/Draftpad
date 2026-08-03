@@ -1,0 +1,217 @@
+/* ============================================================================
+   BUTTON
+
+   Only tier-3 tokens appear here. No hex, no px, no primitives.
+
+   Nothing in this file mentions dark mode. Every colour comes from a
+   mapped token, and those flip at the tier-1 level, so both themes are
+   already handled.
+
+   Order matters: variants come first, then :disabled, so the disabled
+   state wins on equal specificity.
+   ============================================================================ */
+
+.base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+
+  border-style: solid;
+  border-width: var(--border-width-sm);
+
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--easing-standard),
+    border-color var(--duration-fast) var(--easing-standard),
+    color var(--duration-fast) var(--easing-standard);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* Outline rather than border, because outline does not affect layout.
+   A border on focus would shift the button by 2px. */
+.base:focus-visible {
+  outline: var(--border-width-md) solid var(--border-focus);
+  outline-offset: var(--space-1);
+}
+
+/* Respect the OS "reduce motion" setting. */
+@media (prefers-reduced-motion: reduce) {
+  .base {
+    transition: none;
+  }
+}
+
+/* ---- Sizes ----------------------------------------------------------------
+   Padding and radius only. Font size, weight and tracking come from the
+   global .button-12 / .button-14 / .button-16 class the component adds,
+   and the icon boxes size themselves in em off that.
+   -------------------------------------------------------------------------- */
+
+.sm {
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-sm);
+}
+
+.md {
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-md);
+}
+
+.lg {
+  padding: var(--space-12) var(--space-24);
+  border-radius: var(--radius-lg);
+}
+
+/* ---- Variants ------------------------------------------------------------ */
+
+/* Primary: the one dark button on a screen. Hierarchy comes from weight,
+   not hue, which is what makes an accentless palette work. */
+.primary {
+  background-color: var(--bg-solid);
+  border-color: var(--border-solid);
+  color: var(--fg-on-solid);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--bg-solid-hover);
+  border-color: var(--border-solid-hover);
+}
+
+.primary:active:not(:disabled) {
+  background-color: var(--bg-solid-active);
+  border-color: var(--bg-solid-active);
+}
+
+/* Secondary: same footprint as primary, but recedes. Visible border so it
+   still reads as a button at rest. */
+.secondary {
+  background-color: transparent;
+  border-color: var(--border-default);
+  color: var(--fg-default);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--bg-surface-hover);
+  border-color: var(--border-strong);
+}
+
+.secondary:active:not(:disabled) {
+  background-color: var(--bg-surface-active);
+}
+
+/* Ghost: no chrome at rest. For dense contexts like a row in the sidebar,
+   where a border on every item would be noise.
+
+   The transparent border is deliberate rather than border-width: 0. It
+   keeps the box model identical to the other variants, so swapping the
+   variant prop never shifts the layout by a pixel. */
+.ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--fg-muted);
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: var(--bg-surface-hover);
+  color: var(--fg-default);
+}
+
+.ghost:active:not(:disabled) {
+  background-color: var(--bg-surface-active);
+}
+
+/* Danger: filled destructive action. For the confirm button in a delete
+   dialog, not for the delete trigger in a list. */
+.danger {
+  background-color: var(--bg-danger-solid);
+  border-color: var(--border-danger-solid);
+  color: var(--fg-on-danger-solid);
+}
+
+.danger:hover:not(:disabled) {
+  background-color: var(--bg-danger-solid-hover);
+  border-color: var(--bg-danger-solid-hover);
+}
+
+.danger:active:not(:disabled) {
+  background-color: var(--bg-danger-solid-active);
+  border-color: var(--bg-danger-solid-active);
+}
+
+/* Danger ghost: the delete trigger in a list row. Neutral at rest so a
+   list of ten notes is not ten red buttons, red on hover so the
+   consequence is clear before you click. */
+.dangerGhost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--fg-muted);
+}
+
+.dangerGhost:hover:not(:disabled) {
+  background-color: var(--bg-danger-subtle);
+  color: var(--fg-on-danger-subtle);
+}
+
+.dangerGhost:active:not(:disabled) {
+  background-color: var(--bg-danger-subtle-hover);
+}
+
+.dangerGhost:focus-visible {
+  outline-color: var(--border-danger);
+}
+
+/* ---- Disabled -----------------------------------------------------------
+   After the variants so it wins. Explicit tokens rather than opacity:
+   opacity fades the border and any icon too, and composites against
+   whatever is behind it, so the result is a colour nobody chose.
+   -------------------------------------------------------------------------- */
+
+.base:disabled {
+  cursor: not-allowed;
+  background-color: var(--bg-disabled);
+  border-color: var(--border-disabled);
+  color: var(--fg-on-disabled);
+}
+
+/* ---- Icon and spinner ---------------------------------------------------
+   1em so both scale with the font size the size prop set. One value
+   drives text and icons together.
+   -------------------------------------------------------------------------- */
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+
+/* currentColor means the spinner inherits whatever the button's text
+   colour is, so it is light on primary and dark on secondary, in both
+   themes, from one rule. */
+.spinner {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  border: var(--border-width-md) solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--radius-round);
+  animation: spin 600ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1500ms;
+  }
+}

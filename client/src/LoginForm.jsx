@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { login } from './api'
 import { Link } from 'react-router-dom'
+import Button from './components/ui/Button'
+import Form from './components/ui/Form'
+import FormField from './components/ui/FormField'
+import Fieldset from './components/ui/FieldSet'
 
 const LoginForm = ({ onLogin }) => {
   const [email, setEmail] = useState('')
@@ -24,32 +28,41 @@ const LoginForm = ({ onLogin }) => {
   }
 
   return (
-    <section className="vertical-section">
-      <span>login</span>
-      <form onSubmit={handleSubmit} className="form-body">
-        <label>email</label>
-        <input
-          required
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <label>password</label>
-        <input
-          required
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'loading...' : 'login'}
-        </button>
-      </form>
+    <>
+      <h1 className="heading-24">Login</h1>
 
-      <Link to="/signup">don't have an account? create one</Link>
+      <Form onSubmit={handleSubmit}>
 
-      {error && <p>{error}</p>}
-    </section>
+        <Fieldset>
+
+          <FormField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <FormField
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          {error && <p className="label-12 text-danger">{error}</p>}
+
+        </Fieldset>
+
+        <Button type="submit" variant="primary" size="md" fullWidth loading={submitting}>
+          Login
+        </Button>
+
+      </Form>
+
+      <Link className="label-14" to="/signup">Don't have an account? Create one</Link>
+
+    </>
   )
 }
 
