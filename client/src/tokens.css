@@ -204,6 +204,7 @@
   --bg-surface-hover: var(--neutral-4);
   --bg-surface-active: var(--neutral-5);
   --bg-selected: var(--neutral-4);
+  --bg-grid-line: var(--neutral-3);
 
   /* Foregrounds legible on any of the above */
   --fg-default: var(--neutral-12);
