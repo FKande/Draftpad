@@ -1,9 +1,29 @@
 .page {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   min-height: 100dvh;
-  background: var(--bg-page);
+  padding: var(--space-12);
+
+  background-color: var(--bg-page);
+  background-image:
+    linear-gradient(
+      to right,
+      var(--bg-grid-line) var(--border-width-sm),
+      transparent var(--border-width-sm)
+    ),
+    linear-gradient(
+      to bottom,
+      var(--bg-grid-line) var(--border-width-sm),
+      transparent var(--border-width-sm)
+    );
+  background-size: var(--space-24) var(--space-24);
+}
+
+.center {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 }
 
 .card {

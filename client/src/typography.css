@@ -196,15 +196,53 @@
 
 /* ----------------------------------------------------------------------------
    LOGO
-   The only place Caslon appears.
+   The only place Caslon appears. Sizes match the heading scale so nothing
+   new has to be remembered. Tracking tightens as size grows, same as
+   headings, which is what stops the wordmark looking loose when large.
    ---------------------------------------------------------------------------- */
 
-.logo {
+.logo-16 {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-weight: var(--weight-semibold);
+  color: var(--fg-default);
+}
+
+.logo-20 {
   font-family: var(--font-serif);
   font-size: 20px;
   line-height: 1;
   letter-spacing: -0.01em;
-  font-weight: var(--weight-regular);
+  font-weight: var(--weight-semibold);
+  color: var(--fg-default);
+}
+
+.logo-24 {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-weight: var(--weight-semibold);
+  color: var(--fg-default);
+}
+
+.logo-32 {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: var(--weight-semibold);
+  color: var(--fg-default);
+}
+
+.logo-48 {
+  font-family: var(--font-serif);
+  font-size: 48px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-weight: var(--weight-semibold);
   color: var(--fg-default);
 }
 
