@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import Button from './components/ui/Button'
 import Form from './components/ui/Form'
 import FormField from './components/ui/FormField'
-import Fieldset from './components/ui/FieldSet'
+import Fieldset from './components/ui/Fieldset'
 
 const LoginForm = ({ onLogin }) => {
   const [email, setEmail] = useState('')
