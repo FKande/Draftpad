@@ -1,6 +1,6 @@
 import { db } from '../db/index.js'
 import { notes } from '../db/schema.js'
-import { eq, and, sql } from 'drizzle-orm'
+import { eq, and, sql, desc } from 'drizzle-orm'
 
 export async function createNote(userId, title, content) {
   const [note] = await db
@@ -15,6 +15,7 @@ export async function getNotes(userId) {
     .select()
     .from(notes)
     .where(eq(notes.userId, userId))
+    .orderBy(desc(notes.updatedAt))
   return userNotesArray
 }
 
