@@ -1,0 +1,76 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: var(--space-24);
+  width: 240px;
+  border-right: var(--border-width-sm) solid var(--border-subtle);
+  padding: var(--space-12) var(--space-8);
+  background-color: var(--bg-subtle);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.list {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.list ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+  padding: 0;
+}
+
+.row {
+  display: block;
+  padding: var(--space-6) var(--space-8);
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background-color var(--duration-fast) var(--easing-standard);
+}
+
+.row:hover {
+  background-color: var(--bg-surface-hover);
+}
+
+.rowActive {
+  background-color: var(--bg-selected);
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  padding: var(--space-6) var(--space-8);
+  gap: var(--space-4);
+  border-radius: var(--radius-md);
+  border: var(--border-width-sm) solid var(--border-subtle);
+  transition: background-color var(--duration-fast) var(--easing-standard);
+  cursor: pointer;
+}
+
+.account:hover {
+  background-color: var(--bg-surface-hover);
+}
+
+.accountIcon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+
+.accountEmail {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}

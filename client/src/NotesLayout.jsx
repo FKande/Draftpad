@@ -1,11 +1,11 @@
 import { Outlet } from 'react-router-dom'
-import NotesList from './NotesList'
+import Sidebar from './Sidebar'
+import styles from './NotesLayout.module.css'
 
 const NotesLayout = ({ user, notes, notesLoading, notesError, creating, submitting, error, onCreate, onDelete, onLogout }) => {
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
-      <aside style={{ width: '250px', borderRight: '1px solid #ccc' }}>
-        <NotesList
+    <div className={styles.shell}>
+        <Sidebar
           user={user}
           notes={notes}
           notesLoading={notesLoading}
@@ -17,8 +17,7 @@ const NotesLayout = ({ user, notes, notesLoading, notesError, creating, submitti
           onDelete={onDelete}
           onLogout={onLogout}
         />
-      </aside>
-      <main style={{ flex: 1 }}>
+      <main className={styles.editorPane}>
         <Outlet />
       </main>
     </div>
