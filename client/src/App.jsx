@@ -110,6 +110,14 @@ function App() {
     }
   }
 
+  const handleTitleChange = (id, newTitle) => {
+    setNotes((prev) =>
+      prev.map((note) =>
+        note.id === id ? { ...note, title: newTitle } : note,
+      ),
+    )
+  }
+
   const handleContentChange = (id, newContent) => {
     setNotes((prev) =>
       prev.map((note) =>
@@ -169,6 +177,7 @@ function App() {
             notes={notes}
             notesLoading={notesLoading}
             onContentChange={handleContentChange}
+            onTitleChange={handleTitleChange}
           />
         }/>
       </Route>

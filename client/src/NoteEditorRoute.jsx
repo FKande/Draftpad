@@ -1,7 +1,7 @@
 import { useParams, Navigate } from 'react-router-dom'
 import NoteEditor from './NoteEditor'
 
-const NoteEditorRoute = ({ notes, notesLoading, onContentChange }) => {
+const NoteEditorRoute = ({ notes, notesLoading, onContentChange, onTitleChange }) => {
   const { id } = useParams()
   const note = notes.find((n) => n.id === id)
 
@@ -12,6 +12,7 @@ const NoteEditorRoute = ({ notes, notesLoading, onContentChange }) => {
     <NoteEditor
       note={note}
       onContentChange={(newContent) => onContentChange(id, newContent)}
+      onTitleChange={(newTitle) => onTitleChange(id, newTitle)}
       key={note.id}
     />
   )
