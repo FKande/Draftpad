@@ -1,0 +1,195 @@
+/* ============================================================================
+   MODAL
+
+   Built on the native <dialog>, so the browser handles the focus trap,
+   Escape to close, and rendering in the top layer. Nothing here fights
+   z-index, because the top layer sits above every stacking context in
+   the document by definition.
+
+   TWO ELEMENTS, deliberately:
+
+     .dialog    the click region. Covers the viewport, has no padding and
+                no visible appearance of its own. A click landing on THIS
+                element means the user clicked outside the modal.
+     .surface   what you actually see. Owns the background, border, radius
+                and padding.
+
+   The split exists because padding belongs to the element it is on. With
+   padding on .dialog, clicking 24px inside the visible border would still
+   register on .dialog and close the modal. Moving the padding inward
+   makes "clicked the dialog element" mean exactly "clicked the backdrop".
+
+   Browsers give <dialog> a set of defaults (border, padding, max-width,
+   auto margins for centring) that all have to be undone first, same as
+   <fieldset> or <button>.
+   ============================================================================ */
+
+.dialog {
+  /* ---- undo the browser defaults ---- */
+  border: none;
+  padding: 0;
+  max-width: none;
+  max-height: none;
+  background-color: transparent;
+  color: inherit;
+
+  /* Browsers centre a dialog with `margin: auto`. Positioning it instead
+     keeps margins out of the codebase entirely. */
+  margin: 0;
+  position: fixed;
+  inset: 0;
+
+  /* Fill the viewport so the whole backdrop area is part of this element
+     and therefore clickable. */
+  width: 100%;
+  height: 100%;
+
+  /* Centre the surface inside it. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-24); /* keeps the surface off the viewport edge */
+}
+
+/* A closed dialog is display: none, so the flex above must not override
+   that. */
+.dialog:not([open]) {
+  display: none;
+}
+
+/* The dialog is a container, not something you interact with. The visible
+   focus indicators belong on the buttons inside it, which have their own
+   rings from Button.module.css. */
+.dialog:focus,
+.dialog:focus-visible {
+  outline: none;
+}
+
+/* ---- The visible surface ------------------------------------------------- */
+
+.surface {
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-24);
+
+  background-color: var(--bg-page);
+  border: var(--border-width-sm) solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+
+  /* Column so the header and children stack with a gap rather than
+     needing margins. */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+
+  /* If a modal's contents are taller than the viewport, scroll the
+     surface rather than letting it overflow off screen. */
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+/* ---- The backdrop ---------------------------------------------------------
+   ::backdrop is a pseudo-element the browser creates behind a modal
+   dialog. It is not in your DOM, so there is nothing to attach a handler
+   to, which is why click-outside is detected on .dialog instead. In some
+   browsers it also does not inherit custom properties from the element,
+   hence the literal colour. Worth testing var() and falling back to this.
+   -------------------------------------------------------------------------- */
+
+.dialog::backdrop {
+  background-color: rgb(0 0 0 / 0.4);
+  backdrop-filter: blur(2px);
+}
+
+/* ---- Animation -----------------------------------------------------------
+   Animating a dialog means animating from display: none, which normally
+   is not possible. Two newer features make it work:
+
+     allow-discrete      lets display participate in a transition
+     @starting-style     gives the browser a "from" state for an element
+                         that did not exist a frame ago
+
+   Without @starting-style the dialog jumps straight to its final state,
+   because there is no previous value to transition from.
+
+   The fade is on .dialog (so the backdrop and surface fade together) and
+   the slide is on .surface (so only the panel moves).
+   -------------------------------------------------------------------------- */
+
+.dialog {
+  opacity: 0;
+  transition:
+    opacity var(--duration-base) var(--easing-standard),
+    display var(--duration-base) allow-discrete,
+    overlay var(--duration-base) allow-discrete;
+}
+
+.dialog[open] {
+  opacity: 1;
+}
+
+@starting-style {
+  .dialog[open] {
+    opacity: 0;
+  }
+}
+
+.surface {
+  translate: 0 var(--space-8);
+  transition: translate var(--duration-base) var(--easing-standard);
+}
+
+.dialog[open] .surface {
+  translate: 0 0;
+}
+
+@starting-style {
+  .dialog[open] .surface {
+    translate: 0 var(--space-8);
+  }
+}
+
+.dialog::backdrop {
+  opacity: 0;
+  transition:
+    opacity var(--duration-base) var(--easing-standard),
+    display var(--duration-base) allow-discrete,
+    overlay var(--duration-base) allow-discrete;
+}
+
+.dialog[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog,
+  .surface,
+  .dialog::backdrop {
+    transition: none;
+  }
+}
+
+/* ---- Internals ---------------------------------------------------------- */
+
+/* Row for the title and any close button, so the button can sit at the
+   far right without margins. */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-16);
+}
+
+/* Row for action buttons, right-aligned. Convention is the primary action
+   closest to the corner the eye finishes on. */
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-8);
+}
