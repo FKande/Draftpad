@@ -1,0 +1,96 @@
+/* ============================================================================
+   NOTE ROW
+
+   The row is the <li>, not the link. It has to be, because the link and
+   the menu trigger are siblings: a <button> inside an <a> is invalid HTML
+   and its click behaviour is undefined.
+
+   So the properties that used to sit on .row split in two:
+
+     the li    padding, radius, hover background. Anything about the row
+               as a whole, so hovering anywhere in it highlights.
+     the link  the truncation, and it stretches to fill the row so that
+               clicking the empty space beside a short title still
+               navigates.
+   ============================================================================ */
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+
+  padding-left: var(--space-10);
+  padding-right: var(--space-4);
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-radius: var(--radius-md);
+  transition: background-color var(--duration-fast) var(--easing-standard);
+}
+
+.row:hover {
+  background-color: var(--bg-surface-hover);
+}
+
+/* ---- The link ------------------------------------------------------------
+   flex: 1 so it takes all the space the trigger does not, which means the
+   whole row is clickable rather than just the text.
+
+   min-width: 0 because a flex item defaults to min-width: auto, meaning
+   "never shrink below my content". Without it a long title refuses to
+   shrink, the row grows past the sidebar, and the ellipsis never appears.
+   -------------------------------------------------------------------------- */
+
+.link {
+  flex: 1;
+  min-width: 0;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.linkActive {
+  /* The active state now lives on the link, not the row, so it needs its
+     own background. Applying it to the row instead would work too, but
+     the row does not know which of its children is active. */
+  color: var(--fg-default);
+}
+
+/* The selected row reads as selected as a whole, so the background goes
+   on the row via :has(), which matches a parent based on its children.
+   Older approach was to pass isActive up in JS; :has() does it in CSS. */
+.row:has(.linkActive) {
+  background-color: var(--bg-selected);
+}
+
+/* ---- The menu trigger ----------------------------------------------------
+   Hidden at rest so a list of ten notes is not ten buttons.
+
+   Two reveal conditions, and the second is not optional: a control that
+   only appears on hover is invisible to a keyboard user. :focus-within on
+   the row is true whenever anything inside it has focus, which is how CSS
+   reaches "the row containing the focused button" without selecting
+   upward.
+
+   opacity rather than display, so the reveal can transition. The cost is
+   that the button is still clickable and still in the tab order while
+   invisible, which is what we want for the keyboard case anyway.
+   -------------------------------------------------------------------------- */
+
+.trigger {
+  opacity: 0;
+  flex-shrink: 0;
+  transition: opacity var(--duration-fast) var(--easing-standard);
+}
+
+.row:hover .trigger,
+.row:focus-within .trigger {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .trigger {
+    transition: none;
+  }
+}

@@ -16,7 +16,9 @@ const Button = ({
   fullWidth = false,
   iconLeft,
   iconRight,
+  iconOnly,
   children,
+  className,
   ...rest
 }) => {
   const classNames = [
@@ -24,7 +26,9 @@ const Button = ({
     styles.base,
     styles[variant],
     styles[size],
+    className,
     fullWidth && styles.fullWidth,
+    iconOnly && styles.iconOnly
   ]
     .filter(Boolean)
     .join(' ')

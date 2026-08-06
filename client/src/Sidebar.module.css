@@ -29,24 +29,6 @@
   padding: 0;
 }
 
-.row {
-  display: block;
-  padding: var(--space-6) var(--space-8);
-  border-radius: var(--radius-md);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: background-color var(--duration-fast) var(--easing-standard);
-}
-
-.row:hover {
-  background-color: var(--bg-surface-hover);
-}
-
-.rowActive {
-  background-color: var(--bg-selected);
-}
-
 .account {
   display: flex;
   align-items: center;

@@ -1,8 +1,8 @@
-import { NavLink } from 'react-router-dom'
 import styles from './Sidebar.module.css'
 import Button from './components/ui/Button.jsx'
 import Wordmark from './components/Wordmark.jsx'
 import { CircleUser } from 'lucide-react'
+import NoteRow from './NoteRow.jsx'
 
 const Sidebar = ({
   user,
@@ -46,11 +46,7 @@ const Sidebar = ({
           ) : (
             <ul>
               {notes.map((individualNote) => (
-                <li key={individualNote.id}>
-                  <NavLink to={`/notes/${individualNote.id}`} className={({isActive}) => `link-plain label-16 ${styles.row} ${isActive ? styles.rowActive : ''}`}>
-                    {individualNote.title}
-                  </NavLink>
-                </li>
+                <NoteRow key={individualNote.id} note={individualNote} />
               ))}
             </ul>
           ))}

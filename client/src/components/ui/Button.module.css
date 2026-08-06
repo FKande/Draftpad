@@ -66,6 +66,17 @@
   border-radius: var(--radius-lg);
 }
 
+.sm.iconOnly {
+  padding: var(--space-4);
+}
+
+.md.iconOnly {
+  padding: var(--space-8);
+}
+
+.lg.iconOnly {
+  padding: var(--space-12);
+}
 /* ---- Variants ------------------------------------------------------------ */
 
 /* Primary: the one dark button on a screen. Hierarchy comes from weight,
