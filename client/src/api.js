@@ -44,8 +44,8 @@ export async function createNote() {
   return request('/notes', { method: 'POST', body: {} })
 }
 
-export async function updateNote(id, title, content) {
-  return request(`/notes/${id}`, { method: 'PATCH', body: { title, content } })
+export async function updateNote(id, fields) {
+  return request(`/notes/${id}`, { method: 'PATCH', body: fields })
 }
 
 export async function deleteNote(id) {
