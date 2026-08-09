@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import styles from './NotesLayout.module.css'
 
-const NotesLayout = ({ user, notes, notesLoading, notesError, creating, submitting, error, onCreate, onDelete, onLogout }) => {
+const NotesLayout = ({ user, notes, notesLoading, notesError, creating, submitting, error, onCreate, onDelete, onLogout, onRename }) => {
   return (
     <div className={styles.shell}>
         <Sidebar
@@ -16,6 +16,7 @@ const NotesLayout = ({ user, notes, notesLoading, notesError, creating, submitti
           onCreate={onCreate}
           onDelete={onDelete}
           onLogout={onLogout}
+          onRename={onRename}
         />
       <main className={styles.editorPane}>
         <Outlet />

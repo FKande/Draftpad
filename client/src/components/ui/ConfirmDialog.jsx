@@ -1,6 +1,6 @@
 import Modal from './Modal'
 import Button from './Button'
-import styles from './ConfirmDialog.module.css'
+import DialogFooter from './DialogFooter'
 
 const ConfirmDialog = ({
   open,
@@ -21,14 +21,14 @@ const ConfirmDialog = ({
 
       {error && <p className="label-12 text-danger">{error}</p>}
 
-      <div className={styles.footer}>
+      <DialogFooter>
         <Button variant="secondary" onClick={onClose} disabled={loading}>
           {cancelLabel}
         </Button>
         <Button variant={variant} onClick={onConfirm} loading={loading}>
           {confirmLabel}
         </Button>
-      </div>
+      </DialogFooter>
     </Modal>
   )
 }

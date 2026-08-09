@@ -5,15 +5,15 @@ import Button from './components/ui/Button.jsx'
 import styles from './NoteRow.module.css'
 import Menu from './components/ui/Menu.jsx'
 import ConfirmDialog from './components/ui/ConfirmDialog.jsx'
+import RenameDialog from './RenameDialog.jsx'
 
-const NoteRow = ({ note, onDelete }) => {
+const NoteRow = ({ note, onDelete, onRename }) => {
+  const [menuOpen, setMenuOpen] = useState(false)
 
-  const [ menuOpen, setMenuOpen ] = useState(false)
+  const [activeDialog, setActiveDialog] = useState(null)
 
-  const [ activeDialog, setActiveDialog ] = useState(null)
-
-  const [ deleteError, setDeleteError ] = useState(null)
-  const [ deleting, setDeleting ] = useState(false)
+  const [deleteError, setDeleteError] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   const handleDelete = async (id) => {
     setDeleteError(null)
@@ -26,7 +26,6 @@ const NoteRow = ({ note, onDelete }) => {
     } finally {
       setDeleting(false)
     }
-
   }
 
   const handleDialogClose = () => {
@@ -55,14 +54,15 @@ const NoteRow = ({ note, onDelete }) => {
         className={styles.trigger}
         onClick={() => setMenuOpen(!menuOpen)}
       />
-      {menuOpen &&
+      {menuOpen && (
         <Menu
           onClose={() => setMenuOpen(false)}
           items={[
             { label: 'Rename', onSelect: () => setActiveDialog('Rename') },
-            { label: 'Delete', onSelect: () => setActiveDialog('Delete') }
+            { label: 'Delete', onSelect: () => setActiveDialog('Delete') },
           ]}
-      />}
+        />
+      )}
 
       <ConfirmDialog
         open={activeDialog === 'Delete'}
@@ -76,9 +76,17 @@ const NoteRow = ({ note, onDelete }) => {
         error={deleteError}
       />
 
+      <RenameDialog
+        open={activeDialog === 'Rename'}
+        title="Rename note"
+        note={note}
+        confirmLabel="Rename"
+        onClose={handleDialogClose}
+        onRename={onRename}
+        key={activeDialog}
+      />
     </li>
   )
 }
-
 
 export default NoteRow
