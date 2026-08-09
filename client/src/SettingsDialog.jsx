@@ -6,11 +6,17 @@ const SettingsDialog = ({
   onClose,
   onLogout,
   submitting,
-  title
+  title,
+  onToggleTheme,
+  theme
   }) => {
 
   return (
     <Modal open={open} onClose={onClose} title={title}>
+
+      <Button variant="secondary" onClick={onToggleTheme}>
+        {theme === 'light' ? 'Switch to dark' : 'Switch to light'}
+      </Button>
 
       <Button variant="secondary" onClick={onLogout} loading={submitting}>
         Logout

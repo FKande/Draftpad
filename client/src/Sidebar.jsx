@@ -17,7 +17,9 @@ const Sidebar = ({
   onDelete,
   onRename,
   onLogout,
-  submitting
+  submitting,
+  onToggleTheme,
+  theme
 }) => {
 
   const [ settingsOpen, setSettingsOpen ] = useState(false)
@@ -73,6 +75,8 @@ const Sidebar = ({
         title="Settings"
         onLogout={onLogout}
         submitting={submitting}
+        onToggleTheme={onToggleTheme}
+        theme={theme}
       />
 
     </aside>
