@@ -25,6 +25,17 @@ function App() {
 
   const [creating, setCreating] = useState(false)
 
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') ?? 'light')
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light')
+  }
+
   const handleAuthSuccess = (loggedInUser) => {
     setUser(loggedInUser)
     navigate('/notes')
@@ -167,6 +178,8 @@ function App() {
               onDelete={handleDeleteNote}
               onLogout={handleLogout}
               onRename={handleRenameNote}
+              onToggleTheme={toggleTheme}
+              theme={theme}
             />
           </RequireAuth>
         }
