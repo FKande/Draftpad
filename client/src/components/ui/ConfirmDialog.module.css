@@ -1,0 +1,7 @@
+/* Right-aligned action row. Convention is the primary action closest to
+   the corner the eye finishes on, with cancel to its left. */
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-8);
+}
