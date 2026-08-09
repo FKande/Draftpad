@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getMe, logout, getNotes, createNote, deleteNote } from './api'
+import { getMe, logout, getNotes, createNote, deleteNote, updateNote } from './api'
 import LoginForm from './LoginForm'
 import SignupForm from './SignupForm'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
@@ -112,6 +112,11 @@ function App() {
     )
   }
 
+  const handleRenameNote = async (id, newTitle) => {
+    await updateNote(id, { title: newTitle })
+    handleTitleChange(id, newTitle)
+  }
+
   const handleContentChange = (id, newContent) => {
     setNotes((prev) =>
       prev.map((note) =>
@@ -161,6 +166,7 @@ function App() {
               onCreate={handleCreateNote}
               onDelete={handleDeleteNote}
               onLogout={handleLogout}
+              onRename={handleRenameNote}
             />
           </RequireAuth>
         }

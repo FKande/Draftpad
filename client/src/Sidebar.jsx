@@ -12,7 +12,8 @@ const Sidebar = ({
   creating,
   error,
   onCreate,
-  onDelete
+  onDelete,
+  onRename
 }) => {
   return (
     <aside className={styles.sidebar}>
@@ -47,7 +48,7 @@ const Sidebar = ({
           ) : (
             <ul>
               {notes.map((individualNote) => (
-                <NoteRow key={individualNote.id} note={individualNote} onDelete={onDelete}/>
+                <NoteRow key={individualNote.id} note={individualNote} onDelete={onDelete} onRename={onRename}/>
               ))}
             </ul>
           ))}
