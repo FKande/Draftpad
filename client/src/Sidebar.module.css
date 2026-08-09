@@ -1,11 +1,19 @@
+/* ============================================================================
+   SIDEBAR
+
+   A flex column with three children: the header, the note list, and the
+   account button. flex: 1 on the list takes all the leftover space, which
+   is what pins the account button to the bottom without a wrapper.
+   ============================================================================ */
+
 .sidebar {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   gap: var(--space-24);
   width: 240px;
-  border-right: var(--border-width-sm) solid var(--border-subtle);
   padding: var(--space-12) var(--space-8);
+  border-right: var(--border-width-sm) solid var(--border-subtle);
   background-color: var(--bg-subtle);
 }
 
@@ -14,6 +22,13 @@
   flex-direction: column;
   gap: var(--space-12);
 }
+
+/* ---- The note list -------------------------------------------------------
+   min-height: 0 is load-bearing. A flex item defaults to min-height: auto,
+   meaning "never shrink below my content", so without it a long list
+   refuses to shrink, overflow-y never triggers, and the account button
+   gets pushed off screen.
+   -------------------------------------------------------------------------- */
 
 .list {
   flex: 1;
@@ -29,30 +44,65 @@
   padding: 0;
 }
 
+/* ---- The account button --------------------------------------------------
+   A clickable row rather than a button that happens to be wide, same as
+   NoteRow. Deliberately not using the Button primitive: that centres its
+   children, and this needs to read as a left-aligned row.
+
+   Which means the button resets and the focus ring have to be written
+   here. The focus ring is not optional.
+   -------------------------------------------------------------------------- */
+
 .account {
+  /* button resets */
+  width: 100%;
+  border: var(--border-width-sm) solid var(--border-subtle);
+  background-color: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  /* the row */
   display: flex;
   align-items: center;
-  padding: var(--space-6) var(--space-8);
-  gap: var(--space-4);
+  gap: var(--space-6);
+  padding: var(--space-8);
   border-radius: var(--radius-md);
-  border: var(--border-width-sm) solid var(--border-subtle);
-  transition: background-color var(--duration-fast) var(--easing-standard);
-  cursor: pointer;
+
+  transition:
+    background-color var(--duration-fast) var(--easing-standard),
+    border-color var(--duration-fast) var(--easing-standard);
 }
 
 .account:hover {
   background-color: var(--bg-surface-hover);
+  border-color: var(--border-default);
 }
 
+.account:focus-visible {
+  outline: var(--border-width-md) solid var(--border-focus);
+  outline-offset: var(--space-2);
+}
+
+/* 1em so the icon tracks the font size set by the label class on the
+   button, and currentColor so it tracks the text colour in both themes. */
 .accountIcon {
   width: 1em;
   height: 1em;
   flex-shrink: 0;
 }
 
+/* min-width: 0 for the same reason as min-height above, on the other axis:
+   without it a long email refuses to shrink and the ellipsis never shows. */
 .accountEmail {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .account {
+    transition: none;
+  }
 }
