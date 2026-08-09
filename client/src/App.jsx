@@ -98,16 +98,10 @@ function App() {
   }
 
   const handleDeleteNote = async (id) => {
-    if (!window.confirm('Delete this note?')) return
 
-    setError(null)
+    await deleteNote(id)
+    setNotes((prev) => prev.filter((note) => note.id !== id))
 
-    try {
-      await deleteNote(id)
-      setNotes((prev) => prev.filter((note) => note.id !== id))
-    } catch {
-      setError('could not delete, try again')
-    }
   }
 
   const handleTitleChange = (id, newTitle) => {
