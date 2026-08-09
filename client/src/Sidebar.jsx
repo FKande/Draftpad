@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import styles from './Sidebar.module.css'
 import Button from './components/ui/Button.jsx'
 import Wordmark from './components/Wordmark.jsx'
 import { CircleUser } from 'lucide-react'
 import NoteRow from './NoteRow.jsx'
+import SettingsDialog from './SettingsDialog.jsx'
 
 const Sidebar = ({
   user,
@@ -13,8 +15,14 @@ const Sidebar = ({
   error,
   onCreate,
   onDelete,
-  onRename
+  onRename,
+  onLogout,
+  submitting
 }) => {
+
+  const [ settingsOpen, setSettingsOpen ] = useState(false)
+
+
   return (
     <aside className={styles.sidebar}>
 
@@ -54,11 +62,18 @@ const Sidebar = ({
           ))}
       </nav>
 
-      <footer className={`label-14 ${styles.account}`}>
-        <CircleUser className={styles.accountIcon} strokeWidth={1.5} />
+      <button className={`label-14 ${styles.account}`} onClick={() => setSettingsOpen(true)} aria-haspopup="dialog">
+        <CircleUser className={styles.accountIcon} />
         <span className={styles.accountEmail}>{user.email}</span>
-      </footer>
+      </button>
 
+      <SettingsDialog
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        title="Settings"
+        onLogout={onLogout}
+        submitting={submitting}
+      />
 
     </aside>
   )
