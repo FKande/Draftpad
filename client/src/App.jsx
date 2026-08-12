@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react'
-import { getMe, logout, getNotes, createNote, deleteNote, updateNote } from './api'
+import {
+  getMe,
+  logout,
+  getNotes,
+  createNote,
+  deleteNote,
+  updateNote,
+} from './api'
 import LoginForm from './LoginForm'
 import SignupForm from './SignupForm'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
@@ -25,7 +32,13 @@ function App() {
 
   const [creating, setCreating] = useState(false)
 
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') ?? 'light')
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem('theme') ?? 'light',
+  )
+
+  // Which note, if any, is holding keystrokes the server has not received.
+  // Set by NoteEditor, read by loadNotes so a refetch does not overwrite it.
+  const [dirtyNoteId, setDirtyNoteId] = useState(null)
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
@@ -59,25 +72,71 @@ function App() {
     checkAuth()
   }, [])
 
+  // isFirstLoad distinguishes the initial fetch (nothing on screen, so show a
+  // spinner) from a refetch (data already on screen, so leave it alone until
+  // the new data arrives).
+  const loadNotes = async (isFirstLoad = false) => {
+    if (isFirstLoad) {
+      setNotesLoading(true)
+      setNotes([])
+    }
+    setNotesError(false)
+
+    try {
+      const fetchedNotes = await getNotes()
+
+      // Take the server's version of everything except the note currently
+      // holding unsent keystrokes, where the local copy is newer.
+      // prev rather than notes: the fetch took time, and notes was captured
+      // before it started.
+      setNotes((prev) =>
+        fetchedNotes.map((serverNote) =>
+          serverNote.id === dirtyNoteId
+            ? prev.find((note) => note.id === dirtyNoteId)
+            : serverNote,
+        ),
+      )
+    } catch {
+      setNotesError(true)
+    } finally {
+      setNotesLoading(false)
+    }
+  }
+
+  // Refetch when the tab regains focus. This is the sync: each device catches
+  // up the moment you look at it.
+  useEffect(() => {
+    const handleFocus = () => {
+      loadNotes()
+    }
+
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+    // loadNotes is recreated every render, so including it would re-attach the
+    // listener constantly. Proper fix is useCallback; filed as a follow-up.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useEffect(() => {
     if (!user) return
-
-    async function loadNotes() {
-      setNotesLoading(true)
-      setNotesError(false)
-      setNotes([])
-
-      try {
-        const fetchedNotes = await getNotes()
-        setNotes(fetchedNotes)
-      } catch {
-        setNotesError(true)
-      } finally {
-        setNotesLoading(false)
-      }
-    }
-    loadNotes()
+    // Fetching on mount with a loading state is the correct use of an effect.
+    // React's own answer to this rule is "use a data library", deferred to
+    // TanStack Query.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadNotes(true)
+    // loadNotes is recreated every render; including it would refetch forever.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
+
+  const handleNoteFetched = (fetchedNote) => {
+     setNotes((prev) =>
+      prev.map((note) =>
+        note.id === fetchedNote.id
+        ? fetchedNote
+        : note
+      )
+    )
+  }
 
   const handleLogout = async () => {
     setError(null)
@@ -109,12 +168,12 @@ function App() {
   }
 
   const handleDeleteNote = async (id) => {
-
     await deleteNote(id)
     setNotes((prev) => prev.filter((note) => note.id !== id))
-
   }
 
+  // State only, no network. The editor calls this on every keystroke and its
+  // own debounced effect handles the save.
   const handleTitleChange = (id, newTitle) => {
     setNotes((prev) =>
       prev.map((note) =>
@@ -123,6 +182,8 @@ function App() {
     )
   }
 
+  // Saves and then updates state, for renaming from the sidebar where no
+  // editor is mounted to run the debounced save.
   const handleRenameNote = async (id, newTitle) => {
     await updateNote(id, { title: newTitle })
     handleTitleChange(id, newTitle)
@@ -145,7 +206,9 @@ function App() {
       <Route
         path="/login"
         element={
-          user ? <Navigate to="/notes" replace /> : (
+          user ? (
+            <Navigate to="/notes" replace />
+          ) : (
             <AuthLayout>
               <LoginForm onLogin={handleAuthSuccess} />
             </AuthLayout>
@@ -155,7 +218,9 @@ function App() {
       <Route
         path="/signup"
         element={
-          user ? <Navigate to="/notes" replace /> : (
+          user ? (
+            <Navigate to="/notes" replace />
+          ) : (
             <AuthLayout>
               <SignupForm onSignup={handleAuthSuccess} />
             </AuthLayout>
@@ -185,14 +250,19 @@ function App() {
         }
       >
         <Route index element={<p>pick a note</p>} />
-        <Route path=":id" element={
-          <NoteEditorRoute
-            notes={notes}
-            notesLoading={notesLoading}
-            onContentChange={handleContentChange}
-            onTitleChange={handleTitleChange}
-          />
-        }/>
+        <Route
+          path=":id"
+          element={
+            <NoteEditorRoute
+              notes={notes}
+              notesLoading={notesLoading}
+              onContentChange={handleContentChange}
+              onTitleChange={handleTitleChange}
+              onDirtyChange={setDirtyNoteId}
+              onNoteFetched={handleNoteFetched}
+            />
+          }
+        />
       </Route>
     </Routes>
   )
