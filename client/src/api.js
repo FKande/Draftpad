@@ -51,3 +51,7 @@ export async function updateNote(id, fields) {
 export async function deleteNote(id) {
   return request(`/notes/${id}`, { method: 'DELETE' })
 }
+
+export async function getNoteById(id) {
+  return request(`/notes/${id}`)
+}
