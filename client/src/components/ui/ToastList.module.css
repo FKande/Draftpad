@@ -1,0 +1,82 @@
+/* ============================================================================
+   TOAST LIST
+
+   Fixed to the bottom-right, above everything. Rendered inside
+   ToastProvider rather than by whichever component fired the toast, so a
+   message from five levels deep still appears in the corner.
+
+   The container returns null when empty (see ToastList.jsx), otherwise an
+   invisible fixed box would sit over that corner and swallow clicks.
+   pointer-events would be the other fix; the null is simpler.
+   ============================================================================ */
+
+.list {
+  position: fixed;
+  right: var(--space-24);
+  bottom: var(--space-24);
+  z-index: 100;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+
+  /* Cap the width so a long message wraps rather than stretching across
+     the screen, and cap the height so a pile of toasts scrolls instead of
+     running off the top. */
+  width: 100%;
+  max-width: 360px;
+  max-height: 80dvh;
+  overflow-y: auto;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-8);
+
+  padding: var(--space-12) var(--space-16);
+
+  background-color: var(--bg-page);
+  border: var(--border-width-sm) solid var(--border-default);
+  border-radius: var(--radius-lg);
+
+  /* A toast floats above the page, so unlike the rest of the app it needs
+     a shadow to read as detached rather than inline. */
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+}
+
+/* min-width: 0 so a long message wraps instead of forcing the toast wider,
+   the same flex behaviour as the sidebar email. */
+.message {
+  min-width: 0;
+}
+
+.dismiss {
+  flex-shrink: 0;
+}
+
+/* ---- Animation ------------------------------------------------------------
+   Slides in from the right. @starting-style gives the browser a "from"
+   state for an element that did not exist a frame ago; without it the
+   toast appears at its final position with no transition.
+   -------------------------------------------------------------------------- */
+
+.toast {
+  transition:
+    opacity var(--duration-base) var(--easing-standard),
+    translate var(--duration-base) var(--easing-standard);
+}
+
+@starting-style {
+  .toast {
+    opacity: 0;
+    translate: var(--space-16) 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: none;
+  }
+}

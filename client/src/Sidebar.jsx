@@ -12,7 +12,6 @@ const Sidebar = ({
   notesLoading,
   notesError,
   creating,
-  error,
   onCreate,
   onDelete,
   onRename,
@@ -42,8 +41,6 @@ const Sidebar = ({
 
 
       <nav className={styles.list}>
-
-        {error && <p className="label-12 text-danger">{error}</p>}
 
         {notesLoading && <p className="label-12">Loading your notes...</p>}
 
