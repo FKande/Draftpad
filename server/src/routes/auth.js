@@ -29,8 +29,8 @@ router.post('/signup', async (req, res) => {
     const { token, user } = await signup(email, password)
     res.cookie('session', token, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     })
     return res.status(201).json(user)
@@ -41,7 +41,6 @@ router.post('/signup', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   const result = loginSchema.safeParse(req.body)
-
   if (!result.success) {
     return res.status(400).json({ error: result.error })
   }
@@ -53,8 +52,8 @@ router.post('/login', async (req, res) => {
     const { token, user } = await login(email, password)
     res.cookie('session', token, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     })
     return res.status(200).json(user)
@@ -68,7 +67,11 @@ router.post('/logout', async (req, res) => {
   if (token) {
     await logout(token)
   }
-  res.clearCookie('session')
+  res.clearCookie('session', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  })
   return res.status(200).json({ success: true })
 })
 
