@@ -14,14 +14,17 @@ import RequireAuth from './RequireAuth'
 import NoteEditorRoute from './NoteEditorRoute'
 import NotesLayout from './NotesLayout'
 import AuthLayout from './components/AuthLayout'
+import { useToast } from './components/ui/ToastProvider'
 
 function App() {
+
+  const { addToast } = useToast()
+
   const navigate = useNavigate()
 
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
   const [authError, setAuthError] = useState(false)
@@ -139,7 +142,6 @@ function App() {
   }
 
   const handleLogout = async () => {
-    setError(null)
     setSubmitting(true)
 
     try {
@@ -147,21 +149,20 @@ function App() {
       setUser(null)
       setNotes([])
     } catch {
-      setError('Could not log out, try again')
+      addToast('Could not log out, try again')
     } finally {
       setSubmitting(false)
     }
   }
 
   const handleCreateNote = async () => {
-    setError(null)
     setCreating(true)
 
     try {
       const newNote = await createNote()
       setNotes((prev) => [...prev, newNote])
     } catch {
-      setError('Could not create note, try again')
+      addToast('Could not create note, try again')
     } finally {
       setCreating(false)
     }
@@ -238,7 +239,6 @@ function App() {
               notesError={notesError}
               creating={creating}
               submitting={submitting}
-              error={error}
               onCreate={handleCreateNote}
               onDelete={handleDeleteNote}
               onLogout={handleLogout}
