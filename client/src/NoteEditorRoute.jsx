@@ -18,7 +18,11 @@ const NoteEditorRoute = ({ notes, notesLoading, onContentChange, onTitleChange, 
       }
     }
     fetchNote()
-  }, [id, onNoteFetched])
+    // onNoteFetched is recreated on every render of App, so including it here
+    // caused an infinite loop: fetch -> setNotes -> re-render -> new function
+    // identity -> fetch again. Proper fix is useCallback in App.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
 
   if (notesLoading) return <p>loading...</p>
   if (!note) return <Navigate to="/notes" replace />
