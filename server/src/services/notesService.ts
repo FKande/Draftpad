@@ -2,7 +2,7 @@ import { db } from '../db/index.js'
 import { notes } from '../db/schema.js'
 import { eq, and, sql, desc } from 'drizzle-orm'
 
-export async function createNote(userId, title, content) {
+export async function createNote(userId: string, title?: string, content?: string) {
   const [note] = await db
     .insert(notes)
     .values({ userId, title, content })
@@ -10,7 +10,7 @@ export async function createNote(userId, title, content) {
   return note
 }
 
-export async function getNotes(userId) {
+export async function getNotes(userId: string) {
   const userNotesArray = await db
     .select()
     .from(notes)
@@ -19,7 +19,7 @@ export async function getNotes(userId) {
   return userNotesArray
 }
 
-export async function updateNote(userId, noteId, title, content) {
+export async function updateNote(userId: string, noteId: string, title?: string, content?: string) {
 
   const [updatedNote] =  await db.update(notes)
     .set({ title, content, updatedAt: sql`now()` })
@@ -29,7 +29,7 @@ export async function updateNote(userId, noteId, title, content) {
   return updatedNote
 }
 
-export async function deleteNote(userId, noteId) {
+export async function deleteNote(userId: string, noteId: string) {
   const [deletedNote] = await db.delete(notes)
   .where(and(eq(notes.id, noteId), eq(notes.userId, userId)))
   .returning()
@@ -37,7 +37,7 @@ export async function deleteNote(userId, noteId) {
   return deletedNote
 }
 
-export async function getNoteById(userId, noteId) {
+export async function getNoteById(userId: string, noteId: string) {
   const [singleNote] = await db.select()
   .from(notes)
   .where(and(eq(notes.id, noteId), eq(notes.userId, userId)))

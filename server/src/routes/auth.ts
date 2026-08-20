@@ -35,7 +35,8 @@ router.post('/signup', async (req, res) => {
     })
     return res.status(201).json(user)
   } catch (err) {
-    return res.status(409).json({ error: err.message })
+    const message = err instanceof Error ? err.message : 'Something went wrong'
+    return res.status(409).json({ error: message })
   }
 })
 
@@ -58,7 +59,8 @@ router.post('/login', async (req, res) => {
     })
     return res.status(200).json(user)
   } catch (err) {
-    return res.status(401).json({ error: err.message })
+    const message = err instanceof Error ? err.message : 'Something went wrong'
+    return res.status(401).json({ error: message })
   }
 })
 

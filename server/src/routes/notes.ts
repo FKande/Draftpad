@@ -32,12 +32,12 @@ router.post('/', requireAuth, async (req, res) => {
   const title = result.data.title
   const content = result.data.content
 
-  const createdNote = await createNote(req.user.id, title, content)
+  const createdNote = await createNote(req.user!.id, title, content)
   return res.status(201).json(createdNote)
 })
 
 router.get('/', requireAuth, async (req, res) => {
-  const userNotesArray = await getNotes(req.user.id)
+  const userNotesArray = await getNotes(req.user!.id)
   return res.status(200).json(userNotesArray)
 })
 
@@ -50,8 +50,8 @@ router.patch('/:id', requireAuth, validateUuidParam, async (req, res) => {
 
   const title = result.data.title
   const content = result.data.content
-  const noteId = req.params.id
-  const userId = req.user.id
+  const noteId = req.params.id as string
+  const userId = req.user!.id
 
   const updated = await updateNote(userId, noteId, title, content)
   if (!updated) {
@@ -61,8 +61,8 @@ router.patch('/:id', requireAuth, validateUuidParam, async (req, res) => {
 })
 
 router.delete('/:id', requireAuth, validateUuidParam, async (req, res) => {
-  const noteId = req.params.id
-  const userId = req.user.id
+  const noteId = req.params.id as string
+  const userId = req.user!.id
 
   const deleted = await deleteNote(userId, noteId)
 
@@ -74,8 +74,8 @@ router.delete('/:id', requireAuth, validateUuidParam, async (req, res) => {
 })
 
 router.get('/:id', requireAuth, validateUuidParam, async (req, res) => {
-  const noteId = req.params.id
-  const userId = req.user.id
+  const noteId = req.params.id as string
+  const userId = req.user!.id
 
   const note = await getNoteById(userId, noteId)
 

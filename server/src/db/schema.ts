@@ -25,3 +25,12 @@ export const notes = pgTable('notes', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
+
+export type User = typeof users.$inferSelect
+export type NewUser = typeof users.$inferInsert
+
+export type Session = typeof sessions.$inferSelect
+export type NewSession = typeof sessions.$inferInsert
+
+export type Note = typeof notes.$inferSelect
+export type NewNote = typeof notes.$inferInsert
