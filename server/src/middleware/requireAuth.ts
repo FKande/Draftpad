@@ -1,10 +1,11 @@
 import { db } from '../db/index.js'
 import { users, sessions } from '../db/schema.js'
 import { eq } from 'drizzle-orm'
+import type { Request, Response, NextFunction } from 'express'
 
 const errorMessage = 'Unauthorized'
 
-export async function requireAuth(req, res, next) {
+export async function requireAuth(req: Request, res: Response, next: NextFunction) {
   const token = req.cookies.session
 
   if (!token) {

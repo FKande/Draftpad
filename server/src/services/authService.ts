@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 import { eq } from 'drizzle-orm'
 import crypto from 'crypto'
 
-async function createSession(userId) {
+async function createSession(userId: string) {
   const generatedToken = crypto.randomBytes(32).toString('hex')
   const tokenExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
   await db
@@ -14,7 +14,7 @@ async function createSession(userId) {
   return generatedToken
 }
 
-export async function signup(email, password) {
+export async function signup(email: string, password: string) {
   const existing = await db.select().from(users).where(eq(users.email, email))
 
   if (existing.length > 0) {
@@ -33,7 +33,7 @@ export async function signup(email, password) {
   return { token, user: newUser }
 }
 
-export async function login(email, password) {
+export async function login(email: string, password: string) {
   const errorMessage = 'Wrong email or password'
 
   const existing = await db.select().from(users).where(eq(users.email, email))
@@ -58,6 +58,6 @@ export async function login(email, password) {
   return { token, user }
 }
 
-export async function logout(token) {
+export async function logout(token: string) {
   await db.delete(sessions).where(eq(sessions.id, token))
 }
