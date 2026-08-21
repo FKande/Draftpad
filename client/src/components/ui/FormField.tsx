@@ -1,7 +1,12 @@
 import { useId } from 'react'
 import styles from './FormField.module.css'
 
-const FormField = ({ label, error, ...rest }) => {
+type FormFieldProps = {
+  label: string,
+  error?: string | null
+} & React.InputHTMLAttributes<HTMLInputElement>
+
+const FormField = ({ label, error, ...rest }: FormFieldProps) => {
   const id = useId()
   const errorId = `${id}-error`
 

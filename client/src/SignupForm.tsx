@@ -1,19 +1,24 @@
 import { useState } from 'react'
-import { signup } from './api'
+import { signup, isApiError } from './api'
+import type { User } from './api'
 import { Link } from 'react-router-dom'
 import Button from './components/ui/Button'
 import Form from './components/ui/Form'
 import FormField from './components/ui/FormField'
 import Fieldset from './components/ui/Fieldset'
 
-const SignupForm = ({ onSignup }) => {
+type SignupFormProps = {
+  onSignup: (user: User) => void
+}
+
+const SignupForm = ({ onSignup }: SignupFormProps) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError(null)
     setSubmitting(true)
@@ -22,7 +27,7 @@ const SignupForm = ({ onSignup }) => {
       const user = await signup(email, password)
       onSignup(user)
     } catch (err) {
-      setError(err.message)
+      setError(isApiError(err) ? err.message : 'Something went wrong')
     } finally {
       setSubmitting(false)
     }

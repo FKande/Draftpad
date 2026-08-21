@@ -1,8 +1,16 @@
 import { useState, useEffect } from 'react'
 import { updateNote } from './api'
+import type { Note } from './api'
 import styles from './NoteEditor.module.css'
 
-const NoteEditor = ({ note, onContentChange, onTitleChange, onDirtyChange }) => {
+type NoteEditorProps = {
+  note: Note
+  onContentChange: (newContent: string) => void
+  onTitleChange: (newTitle: string) => void
+  onDirtyChange: (id: string | null) => void
+}
+
+const NoteEditor = ({ note, onContentChange, onTitleChange, onDirtyChange }: NoteEditorProps) => {
   const content = note.content ?? ''
   const title = note.title ?? ''
 

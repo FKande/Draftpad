@@ -15,6 +15,10 @@ import NoteEditorRoute from './NoteEditorRoute'
 import NotesLayout from './NotesLayout'
 import AuthLayout from './components/AuthLayout'
 import { useToast } from './components/ui/ToastProvider'
+import { isApiError } from './api'
+import type { Note, User } from './api'
+
+export type Theme = 'light' | 'dark'
 
 function App() {
 
@@ -22,26 +26,28 @@ function App() {
 
   const navigate = useNavigate()
 
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   const [submitting, setSubmitting] = useState(false)
 
   const [authError, setAuthError] = useState(false)
 
-  const [notes, setNotes] = useState([])
+  const [notes, setNotes] = useState<Note[]>([])
   const [notesLoading, setNotesLoading] = useState(true)
   const [notesError, setNotesError] = useState(false)
 
   const [creating, setCreating] = useState(false)
 
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem('theme') ?? 'light',
+  // Cast rather than validate: anything but 'dark' in storage already behaved
+  // as whatever theme it named, and validating here would change that.
+  const [theme, setTheme] = useState<Theme>(
+    () => (localStorage.getItem('theme') ?? 'light') as Theme,
   )
 
   // Which note, if any, is holding keystrokes the server has not received.
   // Set by NoteEditor, read by loadNotes so a refetch does not overwrite it.
-  const [dirtyNoteId, setDirtyNoteId] = useState(null)
+  const [dirtyNoteId, setDirtyNoteId] = useState<string | null>(null)
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
@@ -52,7 +58,7 @@ function App() {
     setTheme(theme === 'light' ? 'dark' : 'light')
   }
 
-  const handleAuthSuccess = (loggedInUser) => {
+  const handleAuthSuccess = (loggedInUser: User) => {
     setUser(loggedInUser)
     navigate('/notes')
   }
@@ -63,7 +69,7 @@ function App() {
         const me = await getMe()
         setUser(me)
       } catch (err) {
-        if (err.status === 401) {
+        if (isApiError(err) && err.status === 401) {
           setUser(null)
         } else {
           setAuthError(true)
@@ -95,7 +101,7 @@ function App() {
       setNotes((prev) =>
         fetchedNotes.map((serverNote) =>
           serverNote.id === dirtyNoteId
-            ? prev.find((note) => note.id === dirtyNoteId)
+            ? prev.find((note) => note.id === dirtyNoteId) ?? serverNote
             : serverNote,
         ),
       )
@@ -131,7 +137,7 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
-  const handleNoteFetched = (fetchedNote) => {
+  const handleNoteFetched = (fetchedNote: Note) => {
      setNotes((prev) =>
       prev.map((note) =>
         note.id === fetchedNote.id
@@ -168,14 +174,14 @@ function App() {
     }
   }
 
-  const handleDeleteNote = async (id) => {
+  const handleDeleteNote = async (id: string) => {
     await deleteNote(id)
     setNotes((prev) => prev.filter((note) => note.id !== id))
   }
 
   // State only, no network. The editor calls this on every keystroke and its
   // own debounced effect handles the save.
-  const handleTitleChange = (id, newTitle) => {
+  const handleTitleChange = (id: string, newTitle: string) => {
     setNotes((prev) =>
       prev.map((note) =>
         note.id === id ? { ...note, title: newTitle } : note,
@@ -185,12 +191,12 @@ function App() {
 
   // Saves and then updates state, for renaming from the sidebar where no
   // editor is mounted to run the debounced save.
-  const handleRenameNote = async (id, newTitle) => {
+  const handleRenameNote = async (id: string, newTitle: string) => {
     await updateNote(id, { title: newTitle })
     handleTitleChange(id, newTitle)
   }
 
-  const handleContentChange = (id, newContent) => {
+  const handleContentChange = (id: string, newContent: string) => {
     setNotes((prev) =>
       prev.map((note) =>
         note.id === id ? { ...note, content: newContent } : note,

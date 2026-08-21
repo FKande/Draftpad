@@ -1,21 +1,28 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Ellipsis } from 'lucide-react'
-import Button from './components/ui/Button.jsx'
+import Button from './components/ui/Button'
 import styles from './NoteRow.module.css'
-import Menu from './components/ui/Menu.jsx'
-import ConfirmDialog from './components/ui/ConfirmDialog.jsx'
-import RenameDialog from './RenameDialog.jsx'
+import Menu from './components/ui/Menu'
+import ConfirmDialog from './components/ui/ConfirmDialog'
+import RenameDialog from './RenameDialog'
+import type { Note } from './api'
 
-const NoteRow = ({ note, onDelete, onRename }) => {
+type NoteRowProps = {
+  note: Note
+  onDelete: (id: string) => Promise<void>
+  onRename: (id: string, newTitle: string) => Promise<void>
+}
+
+const NoteRow = ({ note, onDelete, onRename }: NoteRowProps) => {
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const [activeDialog, setActiveDialog] = useState(null)
+  const [activeDialog, setActiveDialog] = useState<'Rename' | 'Delete' | null>(null)
 
-  const [deleteError, setDeleteError] = useState(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     setDeleteError(null)
     setDeleting(true)
 

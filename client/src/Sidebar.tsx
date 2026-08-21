@@ -1,10 +1,27 @@
 import { useState } from 'react'
 import styles from './Sidebar.module.css'
-import Button from './components/ui/Button.jsx'
-import Wordmark from './components/Wordmark.jsx'
+import Button from './components/ui/Button'
+import Wordmark from './components/Wordmark'
 import { CircleUser } from 'lucide-react'
-import NoteRow from './NoteRow.jsx'
-import SettingsDialog from './SettingsDialog.jsx'
+import NoteRow from './NoteRow'
+import SettingsDialog from './SettingsDialog'
+import type { Note, User } from './api'
+import type { Theme } from './App'
+
+type SidebarProps = {
+  user: User | null
+  notes: Note[]
+  notesLoading: boolean
+  notesError: boolean
+  creating: boolean
+  onCreate: () => void
+  onDelete: (id: string) => Promise<void>
+  onRename: (id: string, newTitle: string) => Promise<void>
+  onLogout: () => void
+  submitting: boolean
+  onToggleTheme: () => void
+  theme: Theme
+}
 
 const Sidebar = ({
   user,
@@ -19,7 +36,7 @@ const Sidebar = ({
   submitting,
   onToggleTheme,
   theme
-}) => {
+}: SidebarProps) => {
 
   const [ settingsOpen, setSettingsOpen ] = useState(false)
 
@@ -63,7 +80,7 @@ const Sidebar = ({
 
       <button className={`label-14 ${styles.account}`} onClick={() => setSettingsOpen(true)} aria-haspopup="dialog">
         <CircleUser className={styles.accountIcon} />
-        <span className={styles.accountEmail}>{user.email}</span>
+        <span className={styles.accountEmail}>{user?.email}</span>
       </button>
 
       <SettingsDialog

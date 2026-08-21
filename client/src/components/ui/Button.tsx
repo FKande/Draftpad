@@ -1,5 +1,15 @@
 import styles from './Button.module.css'
 
+type ButtonProps = {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'dangerGhost'
+  size?: 'sm' | 'md' | 'lg'
+  loading?: boolean
+  fullWidth?: boolean
+  iconLeft?: React.ReactNode
+  iconRight?: React.ReactNode
+  iconOnly?: boolean
+} & React.ButtonHTMLAttributes<HTMLButtonElement>
+
 // size picks a global text style, since a text style is a bundle
 // and shouldn't be re-declared inside a module
 const textStyles = {
@@ -20,7 +30,7 @@ const Button = ({
   children,
   className,
   ...rest
-}) => {
+}: ButtonProps) => {
   const classNames = [
     textStyles[size],
     styles.base,
