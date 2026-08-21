@@ -4,6 +4,18 @@ import Button from './components/ui/Button'
 import DialogFooter from './components/ui/DialogFooter'
 import Form from './components/ui/Form'
 import FormField from './components/ui/FormField'
+import type { Note } from './api'
+
+type RenameDialogProps = {
+  open: boolean
+  onClose: () => void
+  onRename: (id: string, newTitle: string) => Promise<void>
+  title: string
+  confirmLabel?: string
+  cancelLabel?: string
+  variant?: React.ComponentProps<typeof Button>['variant']
+  note: Note
+}
 
 const RenameDialog = ({
     open,
@@ -14,15 +26,15 @@ const RenameDialog = ({
     cancelLabel = 'Cancel',
     variant = 'primary',
     note
-  }) => {
+  }: RenameDialogProps) => {
 
   const [ draft, setDraft ] = useState(note.title)
 
-  const [ renameError, setRenameError ] = useState(null)
+  const [ renameError, setRenameError ] = useState<string | null>(null)
   const [ renaming, setRenaming ] = useState(false)
 
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setRenameError(null)
     setRenaming(true)

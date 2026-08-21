@@ -1,13 +1,24 @@
 import styles from './Menu.module.css'
 import { useRef, useEffect } from 'react';
 
-const Menu = ({ items, onClose }) => {
+interface MenuItem {
+  label: string
+  onSelect: () => void
+}
 
-  const panelRef = useRef(null)
+type MenuProps = {
+  items: MenuItem[]
+  onClose: () => void
+}
+
+const Menu = ({ items, onClose }: MenuProps) => {
+
+  const panelRef = useRef<HTMLUListElement>(null)
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!panelRef.current.contains(e.target)) onClose()
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!panelRef.current) return
+      if (!panelRef.current.contains(e.target as Node)) onClose()
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
@@ -16,18 +27,21 @@ const Menu = ({ items, onClose }) => {
 
   useEffect(() => {
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose()
       }
 
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
         e.preventDefault()
-        let buttons = Array.from(panelRef.current.querySelectorAll('button'))
-        const currentIndex = buttons.indexOf(document.activeElement)
+        if (!panelRef.current) return
+        const buttons = Array.from(panelRef.current.querySelectorAll('button'))
+        const currentIndex = buttons.findIndex(
+          (button) => button === document.activeElement,
+        )
         const direction = e.key === 'ArrowDown' ? 1 : -1
         const nextIndex = (currentIndex + direction + buttons.length) % buttons.length
-        buttons[nextIndex].focus()
+        buttons[nextIndex]?.focus()
       }
 
     }
@@ -38,7 +52,7 @@ const Menu = ({ items, onClose }) => {
   }, [onClose])
 
   useEffect(() => {
-    const previouslyFocused = document.activeElement
+    const previouslyFocused = document.activeElement as HTMLElement | null
     return () => previouslyFocused?.focus()
   }, [])
 

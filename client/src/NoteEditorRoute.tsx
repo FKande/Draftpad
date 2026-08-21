@@ -2,16 +2,29 @@ import { useParams, Navigate } from 'react-router-dom'
 import NoteEditor from './NoteEditor'
 import { useEffect } from 'react'
 import { getNoteById } from './api'
+import type { Note } from './api'
 
-const NoteEditorRoute = ({ notes, notesLoading, onContentChange, onTitleChange, onDirtyChange, onNoteFetched }) => {
+type NoteEditorRouteProps = {
+  notes: Note[]
+  notesLoading: boolean
+  onContentChange: (id: string, newContent: string) => void
+  onTitleChange: (id: string, newTitle: string) => void
+  onDirtyChange: (id: string | null) => void
+  onNoteFetched: (note: Note) => void
+}
+
+const NoteEditorRoute = ({ notes, notesLoading, onContentChange, onTitleChange, onDirtyChange, onNoteFetched }: NoteEditorRouteProps) => {
 
   const { id } = useParams()
   const note = notes.find((n) => n.id === id)
 
   useEffect(() => {
+    if (!id) return
+    // Re-binding because the !id narrowing does not reach into fetchNote.
+    const noteId = id
     async function fetchNote() {
       try {
-        const fetched = await getNoteById(id)
+        const fetched = await getNoteById(noteId)
         onNoteFetched(fetched)
       } catch {
         console.log('There was an error with fetching the new note from the server.')
@@ -30,8 +43,8 @@ const NoteEditorRoute = ({ notes, notesLoading, onContentChange, onTitleChange, 
   return (
     <NoteEditor
       note={note}
-      onContentChange={(newContent) => onContentChange(id, newContent)}
-      onTitleChange={(newTitle) => onTitleChange(id, newTitle)}
+      onContentChange={(newContent) => onContentChange(note.id, newContent)}
+      onTitleChange={(newTitle) => onTitleChange(note.id, newTitle)}
       key={note.id}
       onDirtyChange={onDirtyChange}
     />

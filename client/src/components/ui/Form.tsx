@@ -1,6 +1,8 @@
 import styles from './Form.module.css'
 
-const Form = ({ children, ...rest }) => (
+type FormProps = React.FormHTMLAttributes<HTMLFormElement>
+
+const Form = ({ children, ...rest }: FormProps) => (
   <form className={styles.form} {...rest}>{children}</form>
 )
 

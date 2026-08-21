@@ -2,7 +2,7 @@ import styles from './AuthLayout.module.css'
 import Wordmark from './Wordmark'
 import { Link } from 'react-router-dom'
 
-const AuthLayout = ({ children }) => (
+const AuthLayout = ({ children }: { children: React.ReactNode }) => (
   <div className={styles.page}>
     <header>
       <Link to="/" className="link-plain">

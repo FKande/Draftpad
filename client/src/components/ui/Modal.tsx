@@ -1,8 +1,15 @@
 import { useRef, useEffect } from 'react'
 import styles from './Modal.module.css'
 
-const Modal = ({ open, onClose, title, children }) => {
-  const dialogRef = useRef(null)
+type ModalProps = {
+  open: boolean
+  onClose: () => void
+  title: string
+  children: React.ReactNode
+}
+
+const Modal = ({ open, onClose, title, children }: ModalProps) => {
+  const dialogRef = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
 
@@ -17,7 +24,7 @@ const Modal = ({ open, onClose, title, children }) => {
 
   }, [open])
 
-  const handleClick = (e) => {
+  const handleClick = (e: React.MouseEvent<HTMLDialogElement>) => {
     if (e.target === dialogRef.current) onClose()
   }
 

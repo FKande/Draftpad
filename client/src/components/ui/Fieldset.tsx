@@ -1,6 +1,8 @@
 import styles from './Fieldset.module.css'
 
-const Fieldset = ({ children, ...rest }) => (
+type FieldsetProps = React.FieldsetHTMLAttributes<HTMLFieldSetElement>
+
+const Fieldset = ({ children, ...rest }: FieldsetProps) => (
   <fieldset className={styles.fieldset} {...rest}>{children}</fieldset>
 )
 

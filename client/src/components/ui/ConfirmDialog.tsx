@@ -2,6 +2,19 @@ import Modal from './Modal'
 import Button from './Button'
 import DialogFooter from './DialogFooter'
 
+type ConfirmDialogProps = {
+  open: boolean
+  onClose: () => void
+  onConfirm: () => void
+  title: string
+  message: string
+  error?: string | null
+  confirmLabel?: string
+  cancelLabel?: string
+  variant?: React.ComponentProps<typeof Button>['variant']
+  loading?: boolean
+}
+
 const ConfirmDialog = ({
   open,
   onClose,
@@ -13,7 +26,7 @@ const ConfirmDialog = ({
   cancelLabel = 'Cancel',
   variant = 'primary',
   loading = false,
-}) => {
+}: ConfirmDialogProps) => {
   return (
     <Modal open={open} onClose={onClose} title={title}>
 

@@ -1,5 +1,16 @@
 import Modal from "./components/ui/Modal"
 import Button from "./components/ui/Button"
+import type { Theme } from './App'
+
+type SettingsDialogProps = {
+  open: boolean
+  onClose: () => void
+  onLogout: () => void
+  submitting: boolean
+  title: string
+  onToggleTheme: () => void
+  theme: Theme
+}
 
 const SettingsDialog = ({
   open,
@@ -9,7 +20,7 @@ const SettingsDialog = ({
   title,
   onToggleTheme,
   theme
-  }) => {
+  }: SettingsDialogProps) => {
 
   return (
     <Modal open={open} onClose={onClose} title={title}>

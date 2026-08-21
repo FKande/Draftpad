@@ -1,6 +1,8 @@
 import styles from './DialogFooter.module.css'
 
-const DialogFooter = ({ children, ...rest }) => {
+type DialogFooterProps = React.HTMLAttributes<HTMLDivElement>
+
+const DialogFooter = ({ children, ...rest }: DialogFooterProps) => {
   return (
     <div className={styles.footer} {...rest}>
       {children}
